@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Exceptions\InvalidBirthdayIdException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BirthdayIdRequest;
 use App\Http\Requests\BirthdayStoreRequest;
 use App\Models\Birthday;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use function PHPUnit\Framework\isEmpty;
 
 class BirthdayController extends Controller
 {
