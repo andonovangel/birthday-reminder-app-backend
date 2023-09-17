@@ -12,6 +12,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use function PHPUnit\Framework\isEmpty;
+
 class BirthdayController extends Controller
 {
     public function index(): JsonResponse {
@@ -37,7 +39,7 @@ class BirthdayController extends Controller
                 ->orWhere('body', 'like', "%$search%");
         })->get();
         
-        if ($birthdays) {
+        if (!$birthdays->isEmpty()) {
             return response()->json($birthdays);
         }
         
@@ -58,7 +60,6 @@ class BirthdayController extends Controller
         try {
             $birthday = Birthday::findOrFail($id);
             $birthday->fill($request->validated());
-            $birthday->
             $birthday->save();
 
             return response()->json($birthday);
@@ -86,7 +87,7 @@ class BirthdayController extends Controller
         }
     }
 
-    public function restore(int $id) {
+    public function restore(string $id) {
         try {
             $birthday = Birthday::onlyTrashed()->findOrFail($id);
 
