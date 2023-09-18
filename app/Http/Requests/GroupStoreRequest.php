@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 
-class BirthdayStoreRequest extends FormRequest
+class GroupStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +26,8 @@ class BirthdayStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|max:255',
-            'title' => 'required|max:255',
-            'body' => 'nullable|max:2000',
-            'phone_number' => 'nullable|max:255',
-            'birthday_date' => 'required',
-            "user_id" => 'required',
-            'group_id' => 'nullable',
+            'description' => 'nullable|max:2000',
+            // "user_id" => 'required',
         ];
     }
 
