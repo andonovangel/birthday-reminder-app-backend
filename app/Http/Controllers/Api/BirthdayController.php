@@ -45,9 +45,9 @@ class BirthdayController extends Controller
     
     public function store(BirthdayStoreRequest $request): JsonResponse
     {
-        $brithday = Birthday::create($request->validated());
+        $birthday = Birthday::create($request->validated());
 
-        return response()->json($brithday);
+        return response()->json($birthday);
     }
     
     public function edit(BirthdayStoreRequest $request, string $id): JsonResponse

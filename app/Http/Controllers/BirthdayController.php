@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BirthdayStoreRequest;
 use App\Models\Birthday;
 use Illuminate\Http\Request;
 
@@ -23,15 +24,10 @@ class BirthdayController extends Controller
         return view('birthday/home', ['birthdays' => $birthdays, 'groups' => $groups]);
     }
 
-    public function createBirthday(Request $request)
+    public function createBirthday(BirthdayStoreRequest $request)
     {
-        $incomingFields = $request->validate([
-            'name' => 'required',
-            'title' => 'required',
-            'body' => 'nullable',
-            'phone_number' => 'nullable',
-            'birthday_date' => 'required',
-            'group_id' => 'nullable',
+        $incomingFields = $request->only([
+            'name', 'title', 'body', 'phone_number', 'birthday_date', 'group_id'
         ]);
 
         $incomingFields['name'] = strip_tags($incomingFields['name']);
@@ -40,12 +36,7 @@ class BirthdayController extends Controller
         $incomingFields['phone_number'] = strip_tags($incomingFields['phone_number']);
         $incomingFields['birthday_date'] = strip_tags($incomingFields['birthday_date']);
         
-        if (!is_numeric($incomingFields['group_id'])) {
-            $incomingFields['group_id'] = NULL;
-        }
-        else {
-            $incomingFields['group_id'] = strip_tags($incomingFields['group_id']);
-        }
+        $incomingFields['group_id'] = is_numeric($incomingFields['group_id']) ? strip_tags($incomingFields['group_id']) : NULL;
         
         $incomingFields['user_id'] = auth()->id();
 
@@ -68,19 +59,14 @@ class BirthdayController extends Controller
         return view('birthday/edit-birthday', ['birthday' => $birthday, 'groups' => $groups]);
     }
 
-    public function editBirthday(Birthday $birthday, Request $request)
+    public function editBirthday(Birthday $birthday, BirthdayStoreRequest $request)
     {
         if (auth()->user()->id !== $birthday->user_id) {
             return redirect('/');
         }
 
-        $incomingFields = $request->validate([
-            'name' => 'required',
-            'title' => 'required',
-            'body' => 'nullable',
-            'phone_number' => 'nullable',
-            'birthday_date' => 'required',
-            'group_id' => 'nullable',
+        $incomingFields = $request->only([
+            'name', 'title', 'body', 'phone_number', 'birthday_date', 'group_id'
         ]);
 
         $incomingFields['name'] = strip_tags($incomingFields['name']);
@@ -89,12 +75,7 @@ class BirthdayController extends Controller
         $incomingFields['phone_number'] = strip_tags($incomingFields['phone_number']);
         $incomingFields['birthday_date'] = strip_tags($incomingFields['birthday_date']);
         
-        if (!is_numeric($incomingFields['group_id'])) {
-            $incomingFields['group_id'] = NULL;
-        }
-        else {
-            $incomingFields['group_id'] = strip_tags($incomingFields['group_id']);
-        }
+        $incomingFields['group_id'] = is_numeric($incomingFields['group_id']) ? strip_tags($incomingFields['group_id']) : NULL;
 
         $birthday->update($incomingFields);
         return redirect('/');
@@ -167,10 +148,7 @@ class BirthdayController extends Controller
                 $birthdays->orderBy('name', $order);
             }
         }
-        
-        dump($search);
-        dump($sort);
-        dump($order);
+
         $birthdays = $birthdays->get();
 
         return view('birthday/list-birthdays', compact('birthdays', 'user', 'search', 'sort', 'order'));

@@ -29,8 +29,7 @@ class BirthdayStoreRequest extends FormRequest
             'body' => 'nullable|max:2000',
             'phone_number' => 'nullable|max:225',
             'birthday_date' => 'required',
-            "user_id" => 'required',
-            'group_id' => 'nullable|numeric',
+            'group_id' => 'nullable',
         ];
     }
 
@@ -41,12 +40,4 @@ class BirthdayStoreRequest extends FormRequest
             'data' => $validator->errors()
         ], 403));
     }
-
-    // public function messages() {
-    //     return [
-    //         'name.required' => 'name is required',
-    //         'title.required' => 'title is required',
-    //         'birthday_date.required' => 'birthday_date is required'
-    //     ];
-    // }
 }
