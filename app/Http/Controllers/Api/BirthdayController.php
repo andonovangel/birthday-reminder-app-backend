@@ -45,7 +45,9 @@ class BirthdayController extends Controller
     
     public function store(BirthdayStoreRequest $request): JsonResponse
     {
-        $birthday = Birthday::create($request->validated());
+        $data = $request->validated(); 
+        $data['user_id'] = auth()->user()->id;
+        $birthday = Birthday::create($data);
 
         return response()->json($birthday);
     }
@@ -99,6 +101,12 @@ class BirthdayController extends Controller
     public function archived() {
         $birthdays = Birthday::onlyTrashed()->get();
 
-        return response()->json($birthdays);
+        if (!$birthdays->isEmpty()) {
+            return response()->json($birthdays);
+        }
+        
+        return response()->json([
+            'message' => 'No birthdays are archived'
+        ], Response::HTTP_NOT_FOUND);
     }
 }

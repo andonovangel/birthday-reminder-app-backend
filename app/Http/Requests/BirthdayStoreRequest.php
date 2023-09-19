@@ -29,7 +29,6 @@ class BirthdayStoreRequest extends FormRequest
             'body' => 'nullable|max:2000',
             'phone_number' => 'nullable|max:255',
             'birthday_date' => 'required',
-            "user_id" => 'required',
             'group_id' => 'nullable',
         ];
     }

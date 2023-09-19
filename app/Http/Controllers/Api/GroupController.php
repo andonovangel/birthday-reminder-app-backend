@@ -30,9 +30,7 @@ class GroupController extends Controller
     public function search(string $search): JsonResponse {
         $groups = Group::where(function($query) use ($search) {
             $query->where('name', 'like', "%$search%")
-                ->orWhere('title', 'like', "%$search%") 
-                ->orWhere('phone_number', 'like', "%$search%")
-                ->orWhere('body', 'like', "%$search%");
+                ->orWhere('description', 'like', "%$search%");
         })->get();
         
         if (!$groups->isEmpty()) {
@@ -46,10 +44,9 @@ class GroupController extends Controller
     
     public function store(GroupStoreRequest $request): JsonResponse
     {
-        // $validatedData = $request->validated();
-        // $validatedData['user_id'] = Auth::user()->id();
-        dd(Auth::check());
-        $group = Group::create();
+        $data = $request->validated(); 
+        $data['user_id'] = auth()->user()->id;
+        $group = Group::create($data);
 
         return response()->json($group);
     }
@@ -103,6 +100,12 @@ class GroupController extends Controller
     public function archived() {
         $groups = Group::onlyTrashed()->get();
 
-        return response()->json($groups);
+        if (!$groups->isEmpty()) {
+            return response()->json($groups);
+        }
+        
+        return response()->json([
+            'message' => 'No groups are archived'
+        ], Response::HTTP_NOT_FOUND);
     }
 }
