@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\BirthdayController;
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [UserController::class, 'register']);
