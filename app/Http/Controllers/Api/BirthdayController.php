@@ -79,7 +79,7 @@ class BirthdayController extends Controller
     public function delete(string $id)
     {
         try {
-            $birthday = Birthday::withTrashed()->findOrFail($id);
+            $birthday = Birthday::where('user_id', auth()->user()->id)->withTrashed()->findOrFail($id);
 
             if ($birthday->trashed()) {
                 $birthday->forceDelete();
@@ -97,7 +97,7 @@ class BirthdayController extends Controller
 
     public function restore(string $id) {
         try {
-            $birthday = Birthday::onlyTrashed()->findOrFail($id);
+            $birthday = Birthday::where('user_id', auth()->user()->id)->onlyTrashed()->findOrFail($id);
 
             $birthday->restore();
 
@@ -110,7 +110,7 @@ class BirthdayController extends Controller
     }
 
     public function archived() {
-        $birthdays = Birthday::onlyTrashed()->get();
+        $birthdays = Birthday::where('user_id', auth()->user()->id)->onlyTrashed()->get();
 
         if (!$birthdays->isEmpty()) {
             return response()->json($birthdays);

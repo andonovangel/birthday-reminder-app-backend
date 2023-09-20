@@ -2,10 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Group;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class GroupStoreRequest extends FormRequest
 {
@@ -14,7 +18,13 @@ class GroupStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $group = Group::find($this->route('group'));
+
+        if (!$group) {
+            return true;
+        }
+
+        return $this->user()->can('update', $group);
     }
 
     /**
@@ -24,9 +34,18 @@ class GroupStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $userId = auth()->user()->id;
         return [
-            'name' => 'required|unique:groups|max:255',
-            'description' => 'nullable|max:2000',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('groups')->where('user_id', $userId),
+            ],
+            'description' => [
+                'nullable', 
+                'max:2000',
+            ],
         ];
     }
 
@@ -35,6 +54,6 @@ class GroupStoreRequest extends FormRequest
             'success' => false,
             'message' => 'Validation errors',
             'data' => $validator->errors()
-        ], 403));
+        ], Response::HTTP_FORBIDDEN));
     }
 }

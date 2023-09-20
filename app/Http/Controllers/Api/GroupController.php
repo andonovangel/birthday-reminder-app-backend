@@ -27,7 +27,7 @@ class GroupController extends Controller
 
     public function show(string $id): JsonResponse {
         try {
-            $group = Group::findOrFail($id);
+            $group = Group::where('user_id', auth()->user()->id)->findOrFail($id);
             return response()->json($group);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Group not found'], Response::HTTP_NOT_FOUND);
@@ -77,7 +77,7 @@ class GroupController extends Controller
     public function delete(string $id)
     {
         try {
-            $group = Group::withTrashed()->findOrFail($id);
+            $group = Group::where('user_id', auth()->user()->id)->withTrashed()->findOrFail($id);
 
             if ($group->trashed()) {
                 $group->forceDelete();
@@ -95,7 +95,7 @@ class GroupController extends Controller
 
     public function restore(string $id) {
         try {
-            $group = Group::onlyTrashed()->findOrFail($id);
+            $group = Group::where('user_id', auth()->user()->id)->onlyTrashed()->findOrFail($id);
 
             $group->restore();
 
@@ -108,14 +108,16 @@ class GroupController extends Controller
     }
 
     public function archived() {
-        $groups = Group::onlyTrashed()->get();
+        try {
+            $groups = Group::where('user_id', auth()->user()->id)->onlyTrashed()->get();
+            
+            if ($groups->isEmpty()) {
+                throw new ModelNotFoundException();
+            }
 
-        if (!$groups->isEmpty()) {
             return response()->json($groups);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'No groups found'], Response::HTTP_NOT_FOUND);
         }
-        
-        return response()->json([
-            'message' => 'No groups are archived'
-        ], Response::HTTP_NOT_FOUND);
     }
 }

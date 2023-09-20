@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Birthday;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Response;
 
 class BirthdayStoreRequest extends FormRequest
 {
@@ -13,7 +15,13 @@ class BirthdayStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $birthday = Birthday::find($this->route('birthday'));
+
+        if (!$birthday) {
+            return true;
+        }
+
+        return $this->user()->can('update', $birthday);
     }
 
     /**
@@ -27,7 +35,7 @@ class BirthdayStoreRequest extends FormRequest
             'name' => 'required|max:255',
             'title' => 'required|max:255',
             'body' => 'nullable|max:2000',
-            'phone_number' => 'nullable|regex:/^\+389-7\d-\d{3}-\d{3}$/',
+            'phone_number' => 'nullable|numeric',
             'birthday_date' => 'required|date',
             'group_id' => 'nullable',
         ];
@@ -38,12 +46,6 @@ class BirthdayStoreRequest extends FormRequest
             'success' => false,
             'message' => 'Validation errors',
             'data' => $validator->errors()
-        ], 403));
-    }
-
-    public function messages() {
-        return [
-            'phone_number.regex' => 'Phone number should be in this format: \'+389-7x-xxx-xxx\'',
-        ];
+        ], Response::HTTP_FORBIDDEN));
     }
 }
