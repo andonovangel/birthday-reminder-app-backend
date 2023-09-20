@@ -12,9 +12,17 @@ use Symfony\Component\HttpFoundation\Response;
 class BirthdayController extends Controller
 {
     public function index(): JsonResponse {
-        $birthdays = Birthday::all();
-        
-        return response()->json($birthdays);
+        try {
+            $birthdays = Birthday::where('user_id', auth()->user()->id)->get();
+            
+            if ($birthdays->isEmpty()) {
+                throw new ModelNotFoundException();
+            }
+            
+            return response()->json($birthdays);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'No birthdays found'], Response::HTTP_NOT_FOUND);
+        }
     }
 
     public function show(string $id): JsonResponse {
@@ -27,20 +35,23 @@ class BirthdayController extends Controller
     }
 
     public function search(string $search): JsonResponse {
-        $birthdays = Birthday::where(function($query) use ($search) {
-            $query->where('name', 'like', "%$search%")
-                ->orWhere('title', 'like', "%$search%") 
-                ->orWhere('phone_number', 'like', "%$search%")
-                ->orWhere('body', 'like', "%$search%");
-        })->get();
-        
-        if (!$birthdays->isEmpty()) {
+        try {
+            $birthdays = Birthday::where('user_id', auth()->user()->id)
+                ->where(function($query) use ($search) {
+                            $query->where('name', 'like', "%$search%")
+                                ->orWhere('title', 'like', "%$search%") 
+                                ->orWhere('phone_number', 'like', "%$search%")
+                                ->orWhere('body', 'like', "%$search%");
+                        })->get();
+            
+            if ($birthdays->isEmpty()) {
+                throw new ModelNotFoundException();
+            }
+            
             return response()->json($birthdays);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'No birthdays found'], Response::HTTP_NOT_FOUND);
         }
-        
-        return response()->json([
-            'message' => 'No birthdays found'
-        ], Response::HTTP_NOT_FOUND);
     }
     
     public function store(BirthdayStoreRequest $request): JsonResponse

@@ -7,15 +7,22 @@ use App\Http\Requests\GroupStoreRequest;
 use App\Models\Group;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class GroupController extends Controller
 {
     public function index(): JsonResponse {
-        $groups = Group::all();
-        
-        return response()->json($groups);
+        try {
+            $groups = Group::where('user_id', auth()->user()->id)->get();
+            
+            if ($groups->isEmpty()) {
+                throw new ModelNotFoundException();
+            }
+
+            return response()->json($groups);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'No groups found'], Response::HTTP_NOT_FOUND);
+        }
     }
 
     public function show(string $id): JsonResponse {
@@ -28,18 +35,21 @@ class GroupController extends Controller
     }
 
     public function search(string $search): JsonResponse {
-        $groups = Group::where(function($query) use ($search) {
-            $query->where('name', 'like', "%$search%")
-                ->orWhere('description', 'like', "%$search%");
-        })->get();
-        
-        if (!$groups->isEmpty()) {
+        try {
+            $groups = Group::where('user_id', auth()->user()->id)
+                ->where(function($query) use ($search) {
+                            $query->where('name', 'like', "%$search%")
+                                ->orWhere('description', 'like', "%$search%");
+                        })->get();
+            
+            if ($groups->isEmpty()) {
+                throw new ModelNotFoundException();
+            }
+            
             return response()->json($groups);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'No groups found'], Response::HTTP_NOT_FOUND);
         }
-        
-        return response()->json([
-            'message' => 'No groups found'
-        ], Response::HTTP_NOT_FOUND);
     }
     
     public function store(GroupStoreRequest $request): JsonResponse
