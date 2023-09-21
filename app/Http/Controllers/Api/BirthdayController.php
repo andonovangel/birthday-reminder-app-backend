@@ -44,13 +44,7 @@ class BirthdayController extends Controller
 
     public function search(string $search): JsonResponse {
         try {
-            $birthdays = Birthday::where('user_id', auth()->user()->id)
-                ->where(function($query) use ($search) {
-                            $query->where('name', 'like', "%$search%")
-                                ->orWhere('title', 'like', "%$search%") 
-                                ->orWhere('phone_number', 'like', "%$search%")
-                                ->orWhere('body', 'like', "%$search%");
-                        })->get();
+            $birthdays = $this->birthdayService->search($search);
             
             if ($birthdays->isEmpty()) {
                 throw new ModelNotFoundException();

@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\DTO\GroupDTO;
 use App\Models\Group;
+use Illuminate\Database\Eloquent\Collection;
 
 class GroupService
 {
@@ -12,6 +13,14 @@ class GroupService
 
     public function findGroup(string $id): Group {
         return Group::where('user_id', auth()->user()->id)->findOrFail($id);
+    }
+
+    public function search(string $search): Collection {
+        return Group::where('user_id', auth()->user()->id)
+            ->where(function($query) use ($search) {
+                        $query->where('name', 'like', "%$search%")
+                            ->orWhere('description', 'like', "%$search%");
+                    })->get();
     }
 
     public function createGroup(GroupDTO $groupDTO): Group

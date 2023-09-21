@@ -44,11 +44,7 @@ class GroupController extends Controller
 
     public function search(string $search): JsonResponse {
         try {
-            $groups = Group::where('user_id', auth()->user()->id)
-                ->where(function($query) use ($search) {
-                            $query->where('name', 'like', "%$search%")
-                                ->orWhere('description', 'like', "%$search%");
-                        })->get();
+            $groups = $this->groupService->search($search);
             
             if ($groups->isEmpty()) {
                 throw new ModelNotFoundException();
