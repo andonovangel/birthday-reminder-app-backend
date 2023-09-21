@@ -58,15 +58,11 @@ class GroupController extends Controller
     
     public function store(GroupStoreRequest $request): JsonResponse
     {
-        $groupDTO = new GroupDTO(
-            $request->input('name'),
-            $request->input('description'),
-            auth()->user()->id
+        return response()->json(
+            $this->groupService->createGroup(
+                GroupDTO::fromApiRequest($request)
+            )
         );
-        
-        $group = $this->groupService->createGroup($groupDTO);
-
-        return response()->json($group);
     }
     
     public function edit(GroupStoreRequest $request, string $id): JsonResponse

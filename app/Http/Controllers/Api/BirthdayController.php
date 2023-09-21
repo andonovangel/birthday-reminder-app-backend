@@ -58,19 +58,11 @@ class BirthdayController extends Controller
     
     public function store(BirthdayStoreRequest $request): JsonResponse
     {
-        $birthdayDTO = new BirthdayDTO(
-            $request->input('name'),
-            $request->input('title'),
-            $request->input('phone_number'),
-            $request->input('body'),
-            $request->input('birthday_date'),
-            auth()->user()->id,
-            $request->input('group_id')
+        return response()->json(
+            $this->birthdayService->createBirthday(
+                BirthdayDTO::fromApiRequest($request)
+            )
         );
-        
-        $birthday = $this->birthdayService->createBirthday($birthdayDTO);
-
-        return response()->json($birthday);
     }
     
     public function edit(BirthdayStoreRequest $request, string $id): JsonResponse

@@ -2,6 +2,8 @@
 
 namespace App\DTO;
 
+use Illuminate\Http\Request;
+
 class UserDTO
 {
     public string $name;
@@ -13,5 +15,13 @@ class UserDTO
         $this->name = $name;
         $this->email = $email;
         $this->password = $password;
+    }
+
+    public static function fromApiRequest(Request $request): UserDTO {
+        return new self(
+            $request->input('name'),
+            $request->input('email'),
+            $request->input('password')
+        );
     }
 }

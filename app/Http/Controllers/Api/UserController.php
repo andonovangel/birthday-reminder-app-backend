@@ -27,14 +27,8 @@ class UserController extends Controller
         ]);
 
         $incomiongFields['password'] = bcrypt($incomiongFields['password']);
-        
-        $userDTO = new UserDTO(
-            $request->input('name'),
-            $request->input('email'),
-            $request->input('password')
-        );
 
-        $user = $this->userService->createUser($userDTO);
+        $user = $this->userService->createUser(UserDTO::fromApiRequest($request));
         
         $token = $user->createToken('myapptoken')->plainTextToken;
 

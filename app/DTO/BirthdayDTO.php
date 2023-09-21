@@ -2,6 +2,8 @@
 
 namespace App\DTO;
 
+use App\Http\Requests\BirthdayStoreRequest;
+
 class BirthdayDTO
 {
     public string $name;
@@ -28,5 +30,17 @@ class BirthdayDTO
         $this->birthday_date = $birthday_date;
         $this->user_id = $user_id;
         $this->group_id = $group_id;
+    }
+
+    public static function fromApiRequest(BirthdayStoreRequest $request): BirthdayDTO {
+        return new self(
+            $request->input('name'),
+            $request->input('title'),
+            $request->input('phone_number'),
+            $request->input('body'),
+            $request->input('birthday_date'),
+            auth()->user()->id,
+            $request->input('group_id')
+        );
     }
 }
