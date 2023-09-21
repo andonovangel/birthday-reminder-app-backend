@@ -2,16 +2,24 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DTO\UserDTO;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Services\UserService;
+use Illuminate\Http\{Request, Response, JsonResponse};
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function register(Request $request) {
+    private UserService $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+    
+    public function register(Request $request): JsonResponse {
         $incomiongFields = $request->validate([
             'name' => ['required', 'min:3', 'max:10', Rule::unique('users', 'name')],
             'email' => ['required', 'email', Rule::unique('users', 'email')],
@@ -19,7 +27,14 @@ class UserController extends Controller
         ]);
 
         $incomiongFields['password'] = bcrypt($incomiongFields['password']);
-        $user = User::create($incomiongFields);
+        
+        $userDTO = new UserDTO(
+            $request->input('name'),
+            $request->input('email'),
+            $request->input('password')
+        );
+
+        $user = $this->userService->createUser($userDTO);
         
         $token = $user->createToken('myapptoken')->plainTextToken;
 
@@ -28,7 +43,7 @@ class UserController extends Controller
                         'token' => $token]);
     }
     
-    public function login(Request $request) {
+    public function login(Request $request): JsonResponse {
         $incomiongFields = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required']
@@ -47,7 +62,7 @@ class UserController extends Controller
                         'token' => $token]);
     }
 
-    public function logout()
+    public function logout(): JsonResponse
     {
         auth()->user()->tokens()->delete();
         return response()->json(['message' => 'Logged out']);

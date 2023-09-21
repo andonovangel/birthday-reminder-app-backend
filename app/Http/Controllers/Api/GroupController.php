@@ -2,15 +2,23 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DTO\GroupDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupStoreRequest;
 use App\Models\Group;
+use App\Services\GroupService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\{JsonResponse, Response};
 
 class GroupController extends Controller
 {
+    private GroupService $groupService;
+
+    public function __construct(GroupService $groupService)
+    {
+        $this->groupService = $groupService;
+    }
+
     public function index(): JsonResponse {
         try {
             $groups = Group::where('user_id', auth()->user()->id)->get();
@@ -57,6 +65,14 @@ class GroupController extends Controller
         $data = $request->validated(); 
         $data['user_id'] = auth()->user()->id;
         $group = Group::create($data);
+
+        $groupDTO = new GroupDTO(
+            $request->input('name'),
+            $request->input('description'),
+            auth()->user()->id
+        );
+        
+        $group = $this->groupService->createGroup($groupDTO);
 
         return response()->json($group);
     }

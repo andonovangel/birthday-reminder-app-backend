@@ -2,15 +2,23 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DTO\BirthdayDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BirthdayStoreRequest;
 use App\Models\Birthday;
+use App\Services\BirthdayService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\{JsonResponse, Response};
 
 class BirthdayController extends Controller
 {
+    private BirthdayService $birthdayService;
+
+    public function __construct(BirthdayService $birthdayService)
+    {
+        $this->birthdayService = $birthdayService;
+    }
+    
     public function index(): JsonResponse {
         try {
             $birthdays = Birthday::where('user_id', auth()->user()->id)->get();
@@ -56,9 +64,17 @@ class BirthdayController extends Controller
     
     public function store(BirthdayStoreRequest $request): JsonResponse
     {
-        $data = $request->validated(); 
-        $data['user_id'] = auth()->user()->id;
-        $birthday = Birthday::create($data);
+        $birthdayDTO = new BirthdayDTO(
+            $request->input('name'),
+            $request->input('title'),
+            $request->input('phone_number'),
+            $request->input('body'),
+            $request->input('birthday_date'),
+            auth()->user()->id,
+            $request->input('group_id')
+        );
+        
+        $birthday = $this->birthdayService->createBirthday($birthdayDTO);
 
         return response()->json($birthday);
     }
