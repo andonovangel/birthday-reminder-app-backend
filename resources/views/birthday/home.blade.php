@@ -10,7 +10,7 @@
 </head>
 <body>
     @auth
-    <h1 class="text-center">You are logged in</h1>
+    <h1 class="text-center">You are logged in as {{$user->name}}</h1>
     <div class="container">
         <form action="/create-birthday" method="POST">
             @csrf
@@ -36,7 +36,7 @@
             </div>
             <div class="mb-3">
                 <select name="group_id" class="form-select" aria-label="Default select example">
-                    <option selected>Add to group</option>
+                    <option selected value={{null}}>Add to group</option>
                     @foreach ($groups as $group)
                     <option value={{$group['id']}}>{{$group['name']}}</option>
                     @endforeach

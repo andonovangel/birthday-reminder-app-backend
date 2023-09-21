@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Birthday;
+use App\Services\BirthdayService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
@@ -10,13 +11,19 @@ use Illuminate\Http\Response;
 
 class BirthdayStoreRequest extends FormRequest
 {
+    private BirthdayService $birthdayService;
+
+    public function __construct(BirthdayService $birthdayService)
+    {
+        $this->birthdayService = $birthdayService;
+    }
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        $birthday = Birthday::find($this->route('birthday'));
-
+        $birthday = $this->route('birthday');
+        
         if (!$birthday) {
             return true;
         }

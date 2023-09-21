@@ -37,7 +37,7 @@
                     @if ($birthday->group)
                     <option value={{$birthday->group->id}} selected>{{$birthday->group->name}}</option>
                     @else
-                    <option selected>Add to group</option>
+                    <option selected value={{null}}>Add to group</option>
                     @endif
                     @foreach ($groups as $group)
                     <option value={{$group['id']}}>{{$group['id']}} | {{$group['name']}}</option>

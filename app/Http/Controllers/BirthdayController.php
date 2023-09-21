@@ -2,58 +2,78 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\BirthdayDTO;
 use App\Http\Requests\BirthdayStoreRequest;
 use App\Models\Birthday;
+use App\Services\BirthdayService;
+use App\Services\GroupService;
 use Illuminate\Http\Request;
 
 class BirthdayController extends Controller
 {
-    public function index() {
-        $user = auth()->user();
-        
-        $birthdays = [];
-        if (auth()->check()){
-            $birthdays = $user->usersBirthdayReminders()->latest()->get();
-        }
+    private BirthdayService $birthdayService;
+    private GroupService $groupService;
 
+    public function __construct(BirthdayService $birthdayService, GroupService $groupService)
+    {
+        $this->birthdayService = $birthdayService;
+        $this->groupService = $groupService;
+    }
+
+    public function index() {
+        $birthdays = [];
         $groups = [];
         if (auth()->check()){
-            $groups = $user->usersGroups()->latest()->get();
+            // $birthdays = $user->usersBirthdayReminders()->latest()->get();
+            // $groups = $user->usersGroups()->latest()->get();
+            $birthdays = $this->birthdayService->findAll();
+            $groups = $this->groupService->findAll();
         }
 
-        return view('birthday/home', ['birthdays' => $birthdays, 'groups' => $groups]);
+        return view('birthday/home', [
+            'birthdays' => $birthdays, 
+            'groups' => $groups,
+            'user' => auth()->user()
+        ]);
     }
 
     public function createBirthday(BirthdayStoreRequest $request)
     {
-        $incomingFields = $request->only([
-            'name', 'title', 'body', 'phone_number', 'birthday_date', 'group_id'
-        ]);
+        // $incomingFields = $request->only([
+        //     'name', 'title', 'body', 'phone_number', 'birthday_date', 'group_id'
+        // ]);
 
-        $incomingFields['name'] = strip_tags($incomingFields['name']);
-        $incomingFields['title'] = strip_tags($incomingFields['title']);
-        $incomingFields['body'] = strip_tags($incomingFields['body']);
-        $incomingFields['phone_number'] = strip_tags($incomingFields['phone_number']);
-        $incomingFields['birthday_date'] = strip_tags($incomingFields['birthday_date']);
+        // $incomingFields['name'] = strip_tags($incomingFields['name']);
+        // $incomingFields['title'] = strip_tags($incomingFields['title']);
+        // $incomingFields['body'] = strip_tags($incomingFields['body']);
+        // $incomingFields['phone_number'] = strip_tags($incomingFields['phone_number']);
+        // $incomingFields['birthday_date'] = strip_tags($incomingFields['birthday_date']);
         
-        $incomingFields['group_id'] = is_numeric($incomingFields['group_id']) ? strip_tags($incomingFields['group_id']) : NULL;
+        // $incomingFields['group_id'] = is_numeric($incomingFields['group_id']) ? strip_tags($incomingFields['group_id']) : NULL;
         
-        $incomingFields['user_id'] = auth()->id();
+        // $incomingFields['user_id'] = auth()->id();
 
-        Birthday::create($incomingFields);
+        // Birthday::create($incomingFields);
+
+        $this->birthdayService->createBirthday(
+            BirthdayDTO::fromApiRequest($request)
+        );
+        
         return redirect('/');
     }
 
-    public function showEditBirthday(Birthday $birthday)
+    public function showEditBirthday(string $id)
     {
-        $user = auth()->user();
-        if ($user->id !== $birthday->user_id) {
-            return redirect('/');
-        }
-        
+        // $user = auth()->user();
+        // if ($user->id !== $birthday->user_id) {
+        //     return redirect('/');
+        // }
+
+        $birthday = [];
         $groups = [];
         if (auth()->check()){
-            $groups = $user->usersGroups()->latest()->get();
+            $birthday = $this->birthdayService->findBirthday($id);
+            $groups = $this->groupService->findAll();
         }
         
         return view('birthday/edit-birthday', ['birthday' => $birthday, 'groups' => $groups]);
@@ -64,34 +84,36 @@ class BirthdayController extends Controller
         if (auth()->user()->id !== $birthday->user_id) {
             return redirect('/');
         }
+        $birthday = $this->birthdayService->updateBirthday($request, $birthday);
 
-        $incomingFields = $request->only([
-            'name', 'title', 'body', 'phone_number', 'birthday_date', 'group_id'
-        ]);
+        // $incomingFields = $request->only([
+        //     'name', 'title', 'body', 'phone_number', 'birthday_date', 'group_id'
+        // ]);
 
-        $incomingFields['name'] = strip_tags($incomingFields['name']);
-        $incomingFields['title'] = strip_tags($incomingFields['title']);
-        $incomingFields['body'] = strip_tags($incomingFields['body']);
-        $incomingFields['phone_number'] = strip_tags($incomingFields['phone_number']);
-        $incomingFields['birthday_date'] = strip_tags($incomingFields['birthday_date']);
+        // $incomingFields['name'] = strip_tags($incomingFields['name']);
+        // $incomingFields['title'] = strip_tags($incomingFields['title']);
+        // $incomingFields['body'] = strip_tags($incomingFields['body']);
+        // $incomingFields['phone_number'] = strip_tags($incomingFields['phone_number']);
+        // $incomingFields['birthday_date'] = strip_tags($incomingFields['birthday_date']);
         
-        $incomingFields['group_id'] = is_numeric($incomingFields['group_id']) ? strip_tags($incomingFields['group_id']) : NULL;
+        // $incomingFields['group_id'] = is_numeric($incomingFields['group_id']) ? strip_tags($incomingFields['group_id']) : NULL;
 
-        $birthday->update($incomingFields);
+        // $birthday->update($incomingFields);
         return redirect('/');
     }
 
     public function archivedBirthdays() {
         $user = auth()->user();
+
         $birthdays = [];
-        if (auth()->check()){
-            $birthdays = $user->usersBirthdayReminders()
-                        ->latest()->onlyTrashed()->get();
-        }
-        
         $groups = [];
         if (auth()->check()){
-            $groups = $user->usersGroups()->latest()->get();
+            // $birthdays = $user->usersBirthdayReminders()
+            //             ->latest()->onlyTrashed()->get();
+            // $groups = $user->usersGroups()->latest()->get();
+
+            $birthdays = $this->birthdayService->findAllTrashed();
+            $groups = $this->groupService->findAllTrashed();
         }
 
         return view('birthday/archived-birthdays', ['birthdays' => $birthdays, 'groups' => $groups]);
