@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\DTO\BirthdayDTO;
+use App\Http\Requests\BirthdayStoreRequest;
 use App\Models\Birthday;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -11,7 +12,7 @@ class BirthdayService
         return Birthday::where('user_id', auth()->user()->id)->get();
     }
 
-    public function findBirthday(string $id): array {
+    public function findBirthday(string $id): Birthday {
         return Birthday::where('user_id', auth()->user()->id)->findOrFail($id);
     }
 
@@ -39,5 +40,31 @@ class BirthdayService
         $birthday->save();
 
         return $birthday;
+    }
+
+    public function updateBirthday(BirthdayStoreRequest $request, Birthday $birthday): Birthday
+    {
+        $birthday->fill($request->validated());
+        $birthday->save();  
+
+        return $birthday;
+    }
+
+    public function deleteBirthday(string $id): void {
+        $birthday = $this->findBirthday($id);
+
+        if ($birthday->trashed()) {
+            $birthday->forceDelete();
+        }
+        
+        $birthday->delete();
+    }
+    
+    public function findAllTrashed(): mixed {
+        return Birthday::where('user_id', auth()->user()->id)->onlyTrashed()->get();
+    }
+
+    public function findTrashedBirthday(string $id): Birthday {
+        return Birthday::where('user_id', auth()->user()->id)->onlyTrashed()->findOrFail($id);
     }
 }

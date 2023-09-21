@@ -69,8 +69,7 @@ class GroupController extends Controller
     {
         try {
             $group = Group::findOrFail($id);
-            $group->fill($request->validated());
-            $group->save();
+            $group = $this->groupService->updateGroup($request, $group);
 
             return response()->json($group);
         } catch (ModelNotFoundException $e) {
@@ -81,13 +80,7 @@ class GroupController extends Controller
     public function delete(string $id)
     {
         try {
-            $group = Group::where('user_id', auth()->user()->id)->withTrashed()->findOrFail($id);
-
-            if ($group->trashed()) {
-                $group->forceDelete();
-            }
-            
-            $group->delete();
+            $this->groupService->deleteGroup($id);
             
             return response()->json([
                 'message' => 'Group with id: \'' . $id . '\' was successfuly deleted'
@@ -99,7 +92,7 @@ class GroupController extends Controller
 
     public function restore(string $id) {
         try {
-            $group = Group::where('user_id', auth()->user()->id)->onlyTrashed()->findOrFail($id);
+            $group = $this->groupService->findTrashedGroup($id);
 
             $group->restore();
 
@@ -113,7 +106,7 @@ class GroupController extends Controller
 
     public function archived() {
         try {
-            $groups = Group::where('user_id', auth()->user()->id)->onlyTrashed()->get();
+            $groups = $this->groupService->findAllTrashed();
             
             if ($groups->isEmpty()) {
                 throw new ModelNotFoundException();

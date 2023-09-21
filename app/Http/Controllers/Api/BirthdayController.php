@@ -69,8 +69,7 @@ class BirthdayController extends Controller
     {
         try {
             $birthday = Birthday::findOrFail($id);
-            $birthday->fill($request->validated());
-            $birthday->save();
+            $birthday = $this->birthdayService->updateBirthday($request, $birthday);
 
             return response()->json($birthday);
         } catch (ModelNotFoundException $e) {
@@ -81,13 +80,7 @@ class BirthdayController extends Controller
     public function delete(string $id)
     {
         try {
-            $birthday = Birthday::where('user_id', auth()->user()->id)->withTrashed()->findOrFail($id);
-
-            if ($birthday->trashed()) {
-                $birthday->forceDelete();
-            }
-            
-            $birthday->delete();
+            $this->birthdayService->deleteBirthday($id);
             
             return response()->json([
                 'message' => 'Birthday with id: \'' . $id . '\' was successfuly deleted'
@@ -99,7 +92,7 @@ class BirthdayController extends Controller
 
     public function restore(string $id) {
         try {
-            $birthday = Birthday::where('user_id', auth()->user()->id)->onlyTrashed()->findOrFail($id);
+            $birthday = $this->birthdayService->findTrashedBirthday($id);
 
             $birthday->restore();
 
@@ -112,7 +105,7 @@ class BirthdayController extends Controller
     }
 
     public function archived() {
-        $birthdays = Birthday::where('user_id', auth()->user()->id)->onlyTrashed()->get();
+        $birthdays = $this->birthdayService->findAllTrashed();
 
         if (!$birthdays->isEmpty()) {
             return response()->json($birthdays);

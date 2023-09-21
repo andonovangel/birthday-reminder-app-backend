@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\DTO\GroupDTO;
+use App\Http\Requests\GroupStoreRequest;
 use App\Models\Group;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -33,5 +34,31 @@ class GroupService
         $group->save();
 
         return $group;
+    }
+
+    public function updateGroup(GroupStoreRequest $request, Group $group): Group
+    {
+        $group->fill($request->validated());
+        $group->save();  
+
+        return $group;
+    }
+
+    public function deleteGroup(string $id): void {
+        $group = $this->findGroup($id);
+
+        if ($group->trashed()) {
+            $group->forceDelete();
+        }
+        
+        $group->delete();
+    }
+    
+    public function findAllTrashed(): mixed {
+        return Group::where('user_id', auth()->user()->id)->onlyTrashed()->get();
+    }
+
+    public function findTrashedGroup(string $id): Group {
+        return Group::where('user_id', auth()->user()->id)->onlyTrashed()->findOrFail($id);
     }
 }
