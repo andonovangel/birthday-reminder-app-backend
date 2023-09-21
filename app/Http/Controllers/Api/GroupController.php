@@ -62,10 +62,6 @@ class GroupController extends Controller
     
     public function store(GroupStoreRequest $request): JsonResponse
     {
-        $data = $request->validated(); 
-        $data['user_id'] = auth()->user()->id;
-        $group = Group::create($data);
-
         $groupDTO = new GroupDTO(
             $request->input('name'),
             $request->input('description'),
