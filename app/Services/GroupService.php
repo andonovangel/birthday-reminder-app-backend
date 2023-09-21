@@ -6,6 +6,14 @@ use App\Models\Group;
 
 class GroupService
 {
+    public function findAll(): mixed {
+        return Group::where('user_id', auth()->user()->id)->get();
+    }
+
+    public function findGroup(string $id): Group {
+        return Group::where('user_id', auth()->user()->id)->findOrFail($id);
+    }
+
     public function createGroup(GroupDTO $groupDTO): Group
     {
         $group = new Group();

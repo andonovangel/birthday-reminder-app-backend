@@ -21,7 +21,7 @@ class GroupController extends Controller
 
     public function index(): JsonResponse {
         try {
-            $groups = Group::where('user_id', auth()->user()->id)->get();
+            $groups = $this->groupService->findAll();
             
             if ($groups->isEmpty()) {
                 throw new ModelNotFoundException();
@@ -35,7 +35,7 @@ class GroupController extends Controller
 
     public function show(string $id): JsonResponse {
         try {
-            $group = Group::where('user_id', auth()->user()->id)->findOrFail($id);
+            $group = $this->groupService->findGroup($id);
             return response()->json($group);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Group not found'], Response::HTTP_NOT_FOUND);

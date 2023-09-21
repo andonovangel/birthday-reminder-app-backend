@@ -18,10 +18,10 @@ class BirthdayController extends Controller
     {
         $this->birthdayService = $birthdayService;
     }
-    
+
     public function index(): JsonResponse {
         try {
-            $birthdays = Birthday::where('user_id', auth()->user()->id)->get();
+            $birthdays = $this->birthdayService->findAll();
             
             if ($birthdays->isEmpty()) {
                 throw new ModelNotFoundException();
@@ -35,7 +35,7 @@ class BirthdayController extends Controller
 
     public function show(string $id): JsonResponse {
         try {
-            $birthday = Birthday::findOrFail($id);
+            $birthday = $this->birthdayService->findBirthday($id);
             return response()->json($birthday);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Birthday not found'], Response::HTTP_NOT_FOUND);

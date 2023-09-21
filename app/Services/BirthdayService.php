@@ -6,6 +6,14 @@ use App\Models\Birthday;
 
 class BirthdayService
 {
+    public function findAll(): mixed {
+        return Birthday::where('user_id', auth()->user()->id)->get();
+    }
+
+    public function findBirthday(string $id): Birthday {
+        return Birthday::where('user_id', auth()->user()->id)->findOrFail($id);
+    }
+    
     public function createBirthday(BirthdayDTO $birthdayDTO): Birthday
     {
         $birthday = new Birthday();
