@@ -19,41 +19,33 @@ class BirthdayController extends Controller
         $this->birthdayService = $birthdayService;
     }
 
-    public function index(): JsonResponse {
-        try {
-            $birthdays = $this->birthdayService->findAll();
-            
-            if ($birthdays->isEmpty()) {
-                throw new ModelNotFoundException();
-            }
-            
-            return response()->json($birthdays);
-        } catch (ModelNotFoundException $e) {
+    public function index(): JsonResponse 
+    {
+        $birthdays = $this->birthdayService->findAll();
+        
+        if ($birthdays->isEmpty()) {
             return response()->json(['message' => 'No birthdays found'], Response::HTTP_NOT_FOUND);
         }
+        
+        return response()->json($birthdays);
     }
 
-    public function show(string $id): JsonResponse {
-        try {
-            $birthday = $this->birthdayService->findBirthday($id);
-            return response()->json($birthday);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Birthday not found'], Response::HTTP_NOT_FOUND);
-        }
+    public function show(Birthday $birthday): JsonResponse 
+    {
+        $this->authorize('update', $birthday);
+        
+        return response()->json($birthday);
     }
 
-    public function search(string $search): JsonResponse {
-        try {
-            $birthdays = $this->birthdayService->search($search);
-            
-            if ($birthdays->isEmpty()) {
-                throw new ModelNotFoundException();
-            }
-            
-            return response()->json($birthdays);
-        } catch (ModelNotFoundException $e) {
+    public function search(string $search): JsonResponse 
+    {
+        $birthdays = $this->birthdayService->search($search);
+        
+        if ($birthdays->isEmpty()) {
             return response()->json(['message' => 'No birthdays found'], Response::HTTP_NOT_FOUND);
         }
+        
+        return response()->json($birthdays);
     }
     
     public function store(BirthdayStoreRequest $request): JsonResponse
@@ -65,54 +57,48 @@ class BirthdayController extends Controller
         );
     }
     
-    public function edit(BirthdayStoreRequest $request, string $id): JsonResponse
+    public function update(BirthdayStoreRequest $request, Birthday $birthday): JsonResponse
     {
-        try {
-            $birthday = Birthday::findOrFail($id);
-            $birthday = $this->birthdayService->updateBirthday($request, $birthday);
+        $this->authorize('update', $birthday);
+        $birthday = $this->birthdayService->updateBirthday($request, $birthday);
 
-            return response()->json($birthday);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Birthday not found'], Response::HTTP_NOT_FOUND);
-        }
+        return response()->json($birthday);
     }
 
-    public function delete(string $id)
+    public function destroy(Birthday $birthday): JsonResponse
     {
-        try {
-            $this->birthdayService->deleteBirthday($id);
-            
-            return response()->json([
-                'message' => 'Birthday with id: \'' . $id . '\' was successfuly deleted'
-            ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Birthday not found'], Response::HTTP_NOT_FOUND);
-        }
-    }
+        $this->authorize('delete', $birthday);
 
-    public function restore(string $id) {
-        try {
-            $birthday = $this->birthdayService->findTrashedBirthday($id);
-
-            $birthday->restore();
-
-            return response()->json([
-                'message' => 'Birthday with id: \'' . $id . '\' was successfuly restored'
-            ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Birthday not found'], Response::HTTP_NOT_FOUND);
-        }
-    }
-
-    public function archived() {
-        $birthdays = $this->birthdayService->findAllTrashed();
-
-        if (!$birthdays->isEmpty()) {
-            return response()->json($birthdays);
+        if ($birthday->trashed()) {
+            $birthday->forceDelete();
+        } else {
+            $birthday->delete();
         }
         
         return response()->json([
-            'message' => 'No birthdays are archived'
-        ], Response::HTTP_NOT_FOUND);
+            'message' => 'Birthday with id: \'' . $birthday->id . '\' was successfuly deleted'
+        ]);
+    }
+
+    public function restore(Birthday $birthday): JsonResponse
+    {
+        $this->authorize('delete', $birthday);
+
+        $birthday->restore();
+
+        return response()->json([
+            'message' => 'Birthday with id: \'' . $birthday->id . '\' was successfuly restored'
+        ]);
+    }
+
+    public function archived(): JsonResponse
+    {
+        $birthdays = $this->birthdayService->findAllTrashed();
+
+        if ($birthdays->isEmpty()) {
+            return response()->json(['message' => 'No birthdays are archived'], Response::HTTP_NOT_FOUND);
+        }
+        
+        return response()->json($birthdays);
     }
 }

@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\BirthdayController;
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\UserController;
+use App\Models\Birthday;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [UserController::class, 'register']);
@@ -16,9 +18,9 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/birthdays/search/{search}', [BirthdayController::class, 'search']);
     Route::get('/archived-birthdays', [BirthdayController::class, 'archived']);
     Route::post('/birthdays', [BirthdayController::class, 'store']);
-    Route::put('/birthdays/{birthday}', [BirthdayController::class, 'edit']);
-    Route::delete('/birthdays/{birthday}', [BirthdayController::class, 'delete']);
-    Route::post('/restore-birthday/{birthday}', [BirthdayController::class, 'restore']);
+    Route::put('/birthdays/{birthday}', [BirthdayController::class, 'update']);
+    Route::delete('/birthdays/{birthday}', [BirthdayController::class, 'destroy']);
+    Route::post('/restore-birthday/{birthday}', [BirthdayController::class, 'restore'])->withTrashed();
 
     Route::get('/groups', [GroupController::class, 'index']);
     Route::get('/groups/{group}', [GroupController::class, 'show']);
