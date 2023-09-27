@@ -18,13 +18,15 @@ class GroupStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $group = Group::find($this->route('group'));
+        // $group = Group::find($this->route('group'));
 
-        if (!$group) {
-            return true;
-        }
+        // if (!$group) {
+        //     return true;
+        // }
 
-        return $this->user()->can('update', $group);
+        // return $this->user()->can('update', $group);
+
+        return true;
     }
 
     /**
@@ -42,10 +44,7 @@ class GroupStoreRequest extends FormRequest
                 'max:255',
                 Rule::unique('groups')->where('user_id', $userId),
             ],
-            'description' => [
-                'nullable', 
-                'max:2000',
-            ],
+            'description' => ['nullable', 'max:2000'],
         ];
     }
 

@@ -4,22 +4,17 @@ namespace App\Policies;
 
 use App\Models\Group;
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
 
 class GroupPolicy
 {
     /**
-     * Create a new policy instance.
+     * Determine whether the user can perform the given action on the model.
      */
-    public function __construct()
+    public function authorize(User $user, Group $group): Response
     {
-        //
-    }
-
-    /**
-     * Determine if the given post can be updated by the user.
-     */
-    public function update(User $user, Group $group): bool
-    {
-        return $user->id === $group->user_id;
+        return $user->id === $group->user_id
+                ? Response::allow() 
+                : Response::denyWithStatus(404);
     }
 }

@@ -24,8 +24,6 @@ class BirthdayController extends Controller
         $birthdays = [];
         $groups = [];
         if (auth()->check()){
-            // $birthdays = $user->usersBirthdayReminders()->latest()->get();
-            // $groups = $user->usersGroups()->latest()->get();
             $birthdays = $this->birthdayService->findAll();
             $groups = $this->groupService->findAll();
         }

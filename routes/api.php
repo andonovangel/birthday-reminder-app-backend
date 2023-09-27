@@ -25,7 +25,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/groups/search/{search}', [GroupController::class, 'search']);
     Route::get('/archived-groups', [GroupController::class, 'archived']);
     Route::post('/groups', [GroupController::class, 'store']);
-    Route::put('/groups/{group}', [GroupController::class, 'edit']);
-    Route::delete('/groups/{group}', [GroupController::class, 'delete']);
-    Route::post('/restore-group/{group}', [GroupController::class, 'restore']);
+    Route::put('/groups/{group}', [GroupController::class, 'update']);
+    Route::delete('/groups/{group}', [GroupController::class, 'destroy'])->withTrashed();
+    Route::post('/restore-group/{group}', [GroupController::class, 'restore'])->withTrashed();
 });

@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupStoreRequest;
 use App\Models\Group;
 use App\Services\GroupService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\{JsonResponse, Response};
 
 class GroupController extends Controller
@@ -19,102 +18,91 @@ class GroupController extends Controller
         $this->groupService = $groupService;
     }
 
-    public function index(): JsonResponse {
-        try {
-            $groups = $this->groupService->findAll();
-            
-            if ($groups->isEmpty()) {
-                throw new ModelNotFoundException();
-            }
-
-            return response()->json($groups);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'No groups found'], Response::HTTP_NOT_FOUND);
+    public function index(): JsonResponse 
+    {
+        $groups = $this->groupService->findAll();
+        
+        if ($groups->isEmpty()) {
+            return $this->errorResponse('No groups found');
         }
+        
+        return response()->json($groups, Response::HTTP_OK);
     }
 
-    public function show(string $id): JsonResponse {
-        try {
-            $group = $this->groupService->findGroup($id);
-            return response()->json($group);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Group not found'], Response::HTTP_NOT_FOUND);
-        }
+    public function show(Group $group): JsonResponse 
+    {
+        $this->authorize('authorize', $group);
+        
+        return response()->json($group, Response::HTTP_OK);
     }
 
-    public function search(string $search): JsonResponse {
-        try {
-            $groups = $this->groupService->search($search);
-            
-            if ($groups->isEmpty()) {
-                throw new ModelNotFoundException();
-            }
-            
-            return response()->json($groups);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'No groups found'], Response::HTTP_NOT_FOUND);
+    public function search(string $search): JsonResponse 
+    {
+        $groups = $this->groupService->search($search);
+        
+        if ($groups->isEmpty()) {
+            return $this->errorResponse('No groups found');
         }
+        
+        return response()->json($groups, Response::HTTP_OK);
     }
     
     public function store(GroupStoreRequest $request): JsonResponse
     {
         return response()->json(
             $this->groupService->createGroup(
-                GroupDTO::fromApiRequest($request)
-            )
+                GroupDTO::fromApiRequest($request), 
+            ), Response::HTTP_CREATED
         );
     }
     
-    public function edit(GroupStoreRequest $request, string $id): JsonResponse
+    public function update(GroupStoreRequest $request, Group $group): JsonResponse
     {
-        try {
-            $group = Group::findOrFail($id);
-            $group = $this->groupService->updateGroup($request, $group);
+        $this->authorize('authorize', $group);
+        $group = $this->groupService->updateGroup($request, $group);
 
-            return response()->json($group);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Group not found'], Response::HTTP_NOT_FOUND);
-        }
+        return response()->json($group, Response::HTTP_OK);
     }
 
-    public function delete(string $id)
+    public function destroy(Group $group): JsonResponse
     {
-        try {
-            $this->groupService->deleteGroup($id);
-            
-            return response()->json([
-                'message' => 'Group with id: \'' . $id . '\' was successfuly deleted'
-            ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Group not found'], Response::HTTP_NOT_FOUND);
+        $this->authorize('authorize', $group);
+
+        if ($group->trashed()) {
+            $group->forceDelete();
+        } else {
+            $group->delete();
         }
+        
+        return response()->json([
+            'message' => "Group with id: '$group->id' was successfuly deleted"
+        ], Response::HTTP_OK);
     }
 
-    public function restore(string $id) {
-        try {
-            $group = $this->groupService->findTrashedGroup($id);
+    public function restore(Group $group): JsonResponse
+    {
+        $this->authorize('authorize', $group);
 
-            $group->restore();
+        $group->restore();
 
-            return response()->json([
-                'message' => 'Group with id: \'' . $id . '\' was successfuly restored'
-            ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Group not found'], Response::HTTP_NOT_FOUND);
-        }
+        return response()->json([
+            'message' => "Group with id: '$group->id' was successfuly restored"
+        ], Response::HTTP_OK);
     }
 
-    public function archived() {
-        try {
-            $groups = $this->groupService->findAllTrashed();
-            
-            if ($groups->isEmpty()) {
-                throw new ModelNotFoundException();
-            }
+    public function archived(): JsonResponse
+    {
+        $groups = $this->groupService->findAllTrashed();
 
-            return response()->json($groups);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'No groups found'], Response::HTTP_NOT_FOUND);
+        if ($groups->isEmpty()) {
+            return $this->errorResponse('No groups are archived');
         }
+        
+        return response()->json($groups, Response::HTTP_OK);
+    }
+    
+    protected function errorResponse($message, $status = Response::HTTP_NOT_FOUND)
+    {
+        return response()->json(['message' => $message], $status);
     }
 }

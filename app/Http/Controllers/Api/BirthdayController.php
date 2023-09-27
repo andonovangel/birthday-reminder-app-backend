@@ -76,7 +76,7 @@ class BirthdayController extends Controller
         
         return response()->json([
             'message' => "Birthday with id: '$birthday->id' was successfuly deleted"
-        ], Response::HTTP_NO_CONTENT);
+        ], Response::HTTP_OK);
     }
 
     public function restore(Birthday $birthday): JsonResponse
