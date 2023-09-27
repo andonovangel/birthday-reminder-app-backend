@@ -22,13 +22,6 @@ class BirthdayStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // $birthday = $this->route('birthday');
-        
-        // if (!$birthday) {
-        //     return true;
-        // }
-
-        // return $this->user()->can('update', $birthday);
         return true;
     }
 

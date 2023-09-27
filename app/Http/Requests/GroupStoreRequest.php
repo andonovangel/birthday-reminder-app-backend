@@ -18,14 +18,6 @@ class GroupStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // $group = Group::find($this->route('group'));
-
-        // if (!$group) {
-        //     return true;
-        // }
-
-        // return $this->user()->can('update', $group);
-
         return true;
     }
 
