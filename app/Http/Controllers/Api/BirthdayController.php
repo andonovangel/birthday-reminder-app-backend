@@ -17,12 +17,6 @@ class BirthdayController extends Controller
     {
         $this->birthdayService = $birthdayService;
     }
-    
-    protected function errorResponse($message, $status = Response::HTTP_NOT_FOUND)
-    {
-        return response()->json(['message' => $message], $status);
-    }
-
 
     public function index(): JsonResponse 
     {
@@ -105,5 +99,10 @@ class BirthdayController extends Controller
         }
         
         return response()->json($birthdays, Response::HTTP_OK);
+    }
+    
+    protected function errorResponse($message, $status = Response::HTTP_NOT_FOUND)
+    {
+        return response()->json(['message' => $message], $status);
     }
 }
