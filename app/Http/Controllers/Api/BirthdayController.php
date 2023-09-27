@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\BirthdayStoreRequest;
 use App\Models\Birthday;
 use App\Services\BirthdayService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\{JsonResponse, Response};
 
 class BirthdayController extends Controller
@@ -18,23 +17,29 @@ class BirthdayController extends Controller
     {
         $this->birthdayService = $birthdayService;
     }
+    
+    protected function errorResponse($message, $status = Response::HTTP_NOT_FOUND)
+    {
+        return response()->json(['message' => $message], $status);
+    }
+
 
     public function index(): JsonResponse 
     {
         $birthdays = $this->birthdayService->findAll();
         
         if ($birthdays->isEmpty()) {
-            return response()->json(['message' => 'No birthdays found'], Response::HTTP_NOT_FOUND);
+            return $this->errorResponse('No birthdays found');
         }
         
-        return response()->json($birthdays);
+        return response()->json($birthdays, Response::HTTP_OK);
     }
 
     public function show(Birthday $birthday): JsonResponse 
     {
-        $this->authorize('update', $birthday);
+        $this->authorize('authorize', $birthday);
         
-        return response()->json($birthday);
+        return response()->json($birthday, Response::HTTP_OK);
     }
 
     public function search(string $search): JsonResponse 
@@ -42,32 +47,32 @@ class BirthdayController extends Controller
         $birthdays = $this->birthdayService->search($search);
         
         if ($birthdays->isEmpty()) {
-            return response()->json(['message' => 'No birthdays found'], Response::HTTP_NOT_FOUND);
+            return $this->errorResponse('No birthdays found');
         }
         
-        return response()->json($birthdays);
+        return response()->json($birthdays, Response::HTTP_OK);
     }
     
     public function store(BirthdayStoreRequest $request): JsonResponse
     {
         return response()->json(
             $this->birthdayService->createBirthday(
-                BirthdayDTO::fromApiRequest($request)
-            )
+                BirthdayDTO::fromApiRequest($request), 
+            ), Response::HTTP_CREATED
         );
     }
     
     public function update(BirthdayStoreRequest $request, Birthday $birthday): JsonResponse
     {
-        $this->authorize('update', $birthday);
+        $this->authorize('authorize', $birthday);
         $birthday = $this->birthdayService->updateBirthday($request, $birthday);
 
-        return response()->json($birthday);
+        return response()->json($birthday, Response::HTTP_OK);
     }
 
     public function destroy(Birthday $birthday): JsonResponse
     {
-        $this->authorize('delete', $birthday);
+        $this->authorize('authorize', $birthday);
 
         if ($birthday->trashed()) {
             $birthday->forceDelete();
@@ -76,19 +81,19 @@ class BirthdayController extends Controller
         }
         
         return response()->json([
-            'message' => 'Birthday with id: \'' . $birthday->id . '\' was successfuly deleted'
-        ]);
+            'message' => "Birthday with id: '$birthday->id' was successfuly deleted"
+        ], Response::HTTP_NO_CONTENT);
     }
 
     public function restore(Birthday $birthday): JsonResponse
     {
-        $this->authorize('delete', $birthday);
+        $this->authorize('authorize', $birthday);
 
         $birthday->restore();
 
         return response()->json([
-            'message' => 'Birthday with id: \'' . $birthday->id . '\' was successfuly restored'
-        ]);
+            'message' => "Birthday with id: '$birthday->id' was successfuly restored"
+        ], Response::HTTP_OK);
     }
 
     public function archived(): JsonResponse
@@ -96,9 +101,9 @@ class BirthdayController extends Controller
         $birthdays = $this->birthdayService->findAllTrashed();
 
         if ($birthdays->isEmpty()) {
-            return response()->json(['message' => 'No birthdays are archived'], Response::HTTP_NOT_FOUND);
+            return $this->errorResponse('No birthdays are archived');
         }
         
-        return response()->json($birthdays);
+        return response()->json($birthdays, Response::HTTP_OK);
     }
 }
