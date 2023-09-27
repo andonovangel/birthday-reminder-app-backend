@@ -68,11 +68,8 @@ class GroupController extends Controller
     {
         $this->authorize('authorize', $group);
 
-        if ($group->trashed()) {
-            $group->forceDelete();
-        } else {
-            $group->delete();
-        }
+        $group->trashed() ? $group->forceDelete() : $group->delete();
+
         
         return response()->json([
             'message' => "Group with id: '$group->id' was successfuly deleted"

@@ -68,11 +68,7 @@ class BirthdayController extends Controller
     {
         $this->authorize('authorize', $birthday);
 
-        if ($birthday->trashed()) {
-            $birthday->forceDelete();
-        } else {
-            $birthday->delete();
-        }
+        $birthday->trashed() ? $birthday->forceDelete() : $birthday->delete();
         
         return response()->json([
             'message' => "Birthday with id: '$birthday->id' was successfuly deleted"
