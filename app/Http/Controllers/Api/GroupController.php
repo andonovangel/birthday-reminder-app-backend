@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\DTO\GroupDTO;
+use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupStoreRequest;
 use App\Http\Resources\Api\GroupCollection;
@@ -25,7 +26,7 @@ class GroupController extends Controller
         $groups = $this->groupService->findAll();
         
         if ($groups->isEmpty()) {
-            return $this->errorResponse('No groups found');
+            throw new NotFoundException('No groups found');
         }
         
         return GroupCollection::make(
@@ -47,7 +48,7 @@ class GroupController extends Controller
         $groups = $this->groupService->search($search);
         
         if ($groups->isEmpty()) {
-            return $this->errorResponse('No groups found');
+            throw new NotFoundException('No groups found');
         }
         
         return GroupCollection::make(
@@ -102,7 +103,7 @@ class GroupController extends Controller
         $groups = $this->groupService->findAllTrashed();
 
         if ($groups->isEmpty()) {
-            return $this->errorResponse('No groups are archived');
+            throw new NotFoundException('No groups are archived');
         }
         
         return GroupCollection::make(

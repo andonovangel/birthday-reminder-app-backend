@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\DTO\BirthdayDTO;
+use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BirthdayStoreRequest;
 use App\Http\Resources\Api\{BirthdayCollection, BirthdayResource};
@@ -24,7 +25,7 @@ class BirthdayController extends Controller
         $birthdays = $this->birthdayService->findAll();
         
         if ($birthdays->isEmpty()) {
-            return $this->errorResponse('No birthdays found');
+            throw new NotFoundException('No birthdays found');
         }
         
         return BirthdayCollection::make(
@@ -46,7 +47,7 @@ class BirthdayController extends Controller
         $birthdays = $this->birthdayService->search($search);
         
         if ($birthdays->isEmpty()) {
-            return $this->errorResponse('No birthdays found');
+            throw new NotFoundException('No birthdays found');
         }
         
         return BirthdayCollection::make(
@@ -101,16 +102,11 @@ class BirthdayController extends Controller
         $birthdays = $this->birthdayService->findAllTrashed();
 
         if ($birthdays->isEmpty()) {
-            return $this->errorResponse('No birthdays are archived');
+            throw new NotFoundException('No birthdays are archived');
         }
         
         return BirthdayCollection::make(
             $birthdays,
         );
-    }
-    
-    protected function errorResponse($message, $status = Response::HTTP_NOT_FOUND)
-    {
-        return response()->json(['message' => $message], $status);
     }
 }
