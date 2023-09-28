@@ -3,7 +3,6 @@
 namespace App\DTO;
 
 use App\Http\Requests\GroupStoreRequest;
-use DateTime;
 
 class GroupDTO
 {
@@ -21,7 +20,7 @@ class GroupDTO
         $this->user_id = $user_id;
     }
 
-    public static function fromApiRequest(GroupStoreRequest $request): GroupDTO {
+    public static function fromRequest(GroupStoreRequest $request): GroupDTO {
         return new self(
             $request->input('name'),
             $request->input('description'),

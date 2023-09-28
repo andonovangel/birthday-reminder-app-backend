@@ -32,7 +32,7 @@ class BirthdayDTO
         $this->group_id = $group_id;
     }
 
-    public static function fromApiRequest(BirthdayStoreRequest $request): BirthdayDTO {
+    public static function fromRequest(BirthdayStoreRequest $request): BirthdayDTO {
         return new self(
             $request->input('name'),
             $request->input('title'),

@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\DTO\BirthdayDTO;
 use App\Http\Requests\BirthdayStoreRequest;
 use App\Models\Birthday;
-use App\Services\BirthdayService;
-use App\Services\GroupService;
+use App\Services\{BirthdayService, GroupService};
 use Illuminate\Http\Request;
 
 class BirthdayController extends Controller
@@ -23,6 +22,7 @@ class BirthdayController extends Controller
     public function index() {
         $birthdays = [];
         $groups = [];
+
         if (auth()->check()){
             $birthdays = $this->birthdayService->findAll();
             $groups = $this->groupService->findAll();
@@ -37,40 +37,21 @@ class BirthdayController extends Controller
 
     public function createBirthday(BirthdayStoreRequest $request)
     {
-        // $incomingFields = $request->only([
-        //     'name', 'title', 'body', 'phone_number', 'birthday_date', 'group_id'
-        // ]);
-
-        // $incomingFields['name'] = strip_tags($incomingFields['name']);
-        // $incomingFields['title'] = strip_tags($incomingFields['title']);
-        // $incomingFields['body'] = strip_tags($incomingFields['body']);
-        // $incomingFields['phone_number'] = strip_tags($incomingFields['phone_number']);
-        // $incomingFields['birthday_date'] = strip_tags($incomingFields['birthday_date']);
-        
-        // $incomingFields['group_id'] = is_numeric($incomingFields['group_id']) ? strip_tags($incomingFields['group_id']) : NULL;
-        
-        // $incomingFields['user_id'] = auth()->id();
-
-        // Birthday::create($incomingFields);
-
         $this->birthdayService->createBirthday(
-            BirthdayDTO::fromApiRequest($request)
+            BirthdayDTO::fromRequest($request)
         );
         
         return redirect('/');
     }
 
-    public function showEditBirthday(string $id)
+    public function showEditBirthday(Birthday $birthday)
     {
-        // $user = auth()->user();
-        // if ($user->id !== $birthday->user_id) {
-        //     return redirect('/');
-        // }
+        if (auth()->user()->id !== $birthday->user_id) {
+            return redirect('/');
+        }
 
-        $birthday = [];
         $groups = [];
         if (auth()->check()){
-            $birthday = $this->birthdayService->findBirthday($id);
             $groups = $this->groupService->findAll();
         }
         
@@ -82,34 +63,18 @@ class BirthdayController extends Controller
         if (auth()->user()->id !== $birthday->user_id) {
             return redirect('/');
         }
-        $birthday = $this->birthdayService->updateBirthday($request, $birthday);
 
-        // $incomingFields = $request->only([
-        //     'name', 'title', 'body', 'phone_number', 'birthday_date', 'group_id'
-        // ]);
+        $this->birthdayService->updateBirthday(
+            $birthday, BirthdayDTO::fromRequest($request)
+        );
 
-        // $incomingFields['name'] = strip_tags($incomingFields['name']);
-        // $incomingFields['title'] = strip_tags($incomingFields['title']);
-        // $incomingFields['body'] = strip_tags($incomingFields['body']);
-        // $incomingFields['phone_number'] = strip_tags($incomingFields['phone_number']);
-        // $incomingFields['birthday_date'] = strip_tags($incomingFields['birthday_date']);
-        
-        // $incomingFields['group_id'] = is_numeric($incomingFields['group_id']) ? strip_tags($incomingFields['group_id']) : NULL;
-
-        // $birthday->update($incomingFields);
         return redirect('/');
     }
 
     public function archivedBirthdays() {
-        $user = auth()->user();
-
         $birthdays = [];
         $groups = [];
         if (auth()->check()){
-            // $birthdays = $user->usersBirthdayReminders()
-            //             ->latest()->onlyTrashed()->get();
-            // $groups = $user->usersGroups()->latest()->get();
-
             $birthdays = $this->birthdayService->findAllTrashed();
             $groups = $this->groupService->findAllTrashed();
         }

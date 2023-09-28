@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\DTO\GroupDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupStoreRequest;
+use App\Http\Resources\Api\GroupCollection;
+use App\Http\Resources\Api\GroupResource;
 use App\Models\Group;
 use App\Services\GroupService;
 use Illuminate\Http\{JsonResponse, Response};
@@ -18,7 +20,7 @@ class GroupController extends Controller
         $this->groupService = $groupService;
     }
 
-    public function index(): JsonResponse 
+    public function index(): GroupCollection 
     {
         $groups = $this->groupService->findAll();
         
@@ -26,17 +28,21 @@ class GroupController extends Controller
             return $this->errorResponse('No groups found');
         }
         
-        return response()->json($groups, Response::HTTP_OK);
+        return GroupCollection::make(
+            $groups,
+        );
     }
 
-    public function show(Group $group): JsonResponse 
+    public function show(Group $group): GroupResource 
     {
         $this->authorize('authorize', $group);
         
-        return response()->json($group, Response::HTTP_OK);
+        return GroupResource::make(
+            $group,
+        );
     }
 
-    public function search(string $search): JsonResponse 
+    public function search(string $search): GroupCollection 
     {
         $groups = $this->groupService->search($search);
         
@@ -44,24 +50,29 @@ class GroupController extends Controller
             return $this->errorResponse('No groups found');
         }
         
-        return response()->json($groups, Response::HTTP_OK);
-    }
-    
-    public function store(GroupStoreRequest $request): JsonResponse
-    {
-        return response()->json(
-            $this->groupService->createGroup(
-                GroupDTO::fromApiRequest($request), 
-            ), Response::HTTP_CREATED
+        return GroupCollection::make(
+            $groups,
         );
     }
     
-    public function update(GroupStoreRequest $request, Group $group): JsonResponse
+    public function store(GroupStoreRequest $request): GroupResource
+    {
+        return GroupResource::make(
+            $this->groupService->createGroup(
+                GroupDTO::fromRequest($request), 
+            ),
+        );
+    }
+    
+    public function update(GroupStoreRequest $request, Group $group): GroupResource
     {
         $this->authorize('authorize', $group);
-        $group = $this->groupService->updateGroup($request, $group);
 
-        return response()->json($group, Response::HTTP_OK);
+        return GroupResource::make(
+            $this->groupService->updateGroup(
+                $group, GroupDTO::fromRequest($request)
+            ),
+        );
     }
 
     public function destroy(Group $group): JsonResponse
@@ -69,7 +80,6 @@ class GroupController extends Controller
         $this->authorize('authorize', $group);
 
         $group->trashed() ? $group->forceDelete() : $group->delete();
-
         
         return response()->json([
             'message' => "Group with id: '$group->id' was successfuly deleted"
@@ -87,7 +97,7 @@ class GroupController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function archived(): JsonResponse
+    public function archived(): GroupCollection
     {
         $groups = $this->groupService->findAllTrashed();
 
@@ -95,7 +105,9 @@ class GroupController extends Controller
             return $this->errorResponse('No groups are archived');
         }
         
-        return response()->json($groups, Response::HTTP_OK);
+        return GroupCollection::make(
+            $groups,
+        );
     }
     
     protected function errorResponse($message, $status = Response::HTTP_NOT_FOUND)

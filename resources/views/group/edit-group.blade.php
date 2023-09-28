@@ -18,7 +18,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Description</label>
-                <input name="description" type="text" class="form-control" value="{{$group->title}}" placeholder="Description">
+                <input name="description" type="text" class="form-control" value="{{$group->description}}" placeholder="Description">
             </div>
             <button type="submit" class="btn btn-primary">Edit</button>
         </form>

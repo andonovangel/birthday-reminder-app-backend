@@ -2,40 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Birthday;
-use App\Models\Group;
+use App\DTO\GroupDTO;
+use App\Http\Requests\GroupStoreRequest;
+use App\Models\{Birthday, Group};
+use App\Services\{BirthdayService, GroupService};
 use Illuminate\Http\Request;
 
 class GroupController extends Controller
 {
-    public function index() {
-        $user = auth()->user();
-        
-        $birthdays = [];
-        if (auth()->check()){
-            $birthdays = $user->usersBirthdayReminders()->latest()->get();
-        }
+    private BirthdayService $birthdayService;
+    private GroupService $groupService;
 
+    public function __construct(BirthdayService $birthdayService, GroupService $groupService)
+    {
+        $this->birthdayService = $birthdayService;
+        $this->groupService = $groupService;
+    }
+    
+    public function index()
+    {
+        $birthdays = [];
         $groups = [];
         if (auth()->check()){
-            $groups = $user->usersGroups()->latest()->get();
+            $birthdays = $this->birthdayService->findAll();
+            $groups = $this->groupService->findAll();
         }
 
         return view('group/groups', ['birthdays' => $birthdays, 'groups' => $groups]);
     }
 
-    public function createGroup(Request $request)
+    public function createGroup(GroupStoreRequest $request)
     {
-        $incomingFields = $request->validate([
-            'name' => 'required',
-            'description' => 'nullable'
-        ]);
+        $this->groupService->createGroup(
+            GroupDTO::fromRequest($request), 
+        );
 
-        $incomingFields['name'] = strip_tags($incomingFields['name']);
-        $incomingFields['description'] = strip_tags($incomingFields['description']);
-        $incomingFields['user_id'] = auth()->id();
-
-        Group::create($incomingFields);
         return redirect('/groups');
     }
 
@@ -47,36 +48,32 @@ class GroupController extends Controller
         return view('group/edit-group', ['group' => $group]);
     }
 
-    public function editGroup(Group $group, Request $request)
+    public function editGroup(Group $group, GroupStoreRequest $request)
     {
         if (auth()->user()->id !== $group['user_id']) {
             return redirect('/groups');
         }
 
-        $incomingFields = $request->validate([
-            'name' => 'required',
-            'description' => 'nullable'
-        ]);
+        $this->groupService->updateGroup(
+            $group, GroupDTO::fromRequest($request)
+        );
 
-        $incomingFields['name'] = strip_tags($incomingFields['name']);
-        $incomingFields['description'] = strip_tags($incomingFields['description']);
-
-        $group->update($incomingFields);
         return redirect('/groups');
     }
 
-    public function removeFromGroup(Birthday $birthday) {
+    public function removeFromGroup(Birthday $birthday)
+    {
         $birthday->group_id = NULL;
         $birthday->update();
 
         return redirect('/groups');
     }
 
-    public function archivedGroups() {
+    public function archivedGroups()
+    {
         $groups = [];
         if (auth()->check()) {
-            $groups = auth()->user()->usersGroups()
-                    ->latest()->onlyTrashed()->get();
+            $groups = $this->groupService->findAllTrashed();
         }
 
         return view('group/archived-groups', ['groups' => $groups]);
@@ -108,7 +105,8 @@ class GroupController extends Controller
         return redirect('/groups');
     }
 
-    public function restoreGroup(Group $group, Request $request) {
+    public function restoreGroup(Group $group, Request $request)
+    {
         $group->restore();
 
         return redirect('/groups');
