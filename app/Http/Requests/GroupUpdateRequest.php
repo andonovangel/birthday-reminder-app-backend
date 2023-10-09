@@ -7,7 +7,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Response;
 
-class BirthdayStoreRequest extends FormRequest
+class GroupUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +25,12 @@ class BirthdayStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'max:255'],
-            'title' => ['required', 'max:255'],
-            'body' => ['nullable', 'max:2000'],
-            'phone_number' => ['nullable', 'numeric'],
-            'birthday_date' => ['required', 'date'],
-            'group_id' => 'nullable',
+            'name' => [
+                'sometimes',
+                'string',
+                'max:255',
+            ],
+            'description' => ['sometimes', 'nullable', 'max:2000'],
         ];
     }
 

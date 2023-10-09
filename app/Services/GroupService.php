@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\DTO\GroupDTO;
+use App\Http\Requests\GroupUpdateRequest;
 use App\Models\Group;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -31,12 +32,12 @@ class GroupService
         return $group;
     }
 
-    public function updateGroup(Group $group, GroupDTO $groupDTO): Group
+    public function updateGroup(Group $group, GroupUpdateRequest $request, string $userId): Group
     {
         return tap($group)->update([
-            'name' => $groupDTO->name, 
-            'description' => $groupDTO->description,
-            'user_id' => $groupDTO->user_id,
+            'name' => $request->input('name'), 
+            'description' => $request->input('description'),
+            'user_id' => $userId
         ]);
     }
     

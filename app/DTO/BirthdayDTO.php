@@ -32,14 +32,14 @@ class BirthdayDTO
         $this->group_id = $group_id;
     }
 
-    public static function fromRequest(BirthdayStoreRequest $request): BirthdayDTO {
+    public static function fromRequest(BirthdayStoreRequest $request, $userId): BirthdayDTO {
         return new self(
             $request->input('name'),
             $request->input('title'),
             $request->input('phone_number'),
             $request->input('body'),
             $request->input('birthday_date'),
-            auth()->user()->id,
+            $userId,
             $request->input('group_id')
         );
     }

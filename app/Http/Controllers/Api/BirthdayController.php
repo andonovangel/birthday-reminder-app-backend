@@ -6,7 +6,7 @@ use App\DTO\BirthdayDTO;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BirthdayStoreRequest;
-use App\Http\Resources\Api\{BirthdayCollection, BirthdayResource};
+use App\Http\Requests\BirthdayUpdateRequest;
 use App\Models\Birthday;
 use App\Services\BirthdayService;
 use Illuminate\Http\{JsonResponse, Response};
@@ -20,7 +20,7 @@ class BirthdayController extends Controller
         $this->birthdayService = $birthdayService;
     }
 
-    public function index(): BirthdayCollection 
+    public function index(): JsonResponse 
     {
         $birthdays = $this->birthdayService->findAll();
         
@@ -28,21 +28,17 @@ class BirthdayController extends Controller
             throw new NotFoundException('No birthdays found');
         }
         
-        return BirthdayCollection::make(
-            $birthdays,
-        );
+        return response()->json($birthdays, Response::HTTP_OK);
     }
 
-    public function show(Birthday $birthday): BirthdayResource 
+    public function show(Birthday $birthday): JsonResponse 
     {
         $this->authorize('authorize', $birthday);
         
-        return BirthdayResource::make(
-            $birthday,
-        );
+        return response()->json($birthday, Response::HTTP_OK);
     }
 
-    public function search(string $search): BirthdayCollection 
+    public function search(string $search): JsonResponse 
     {
         $birthdays = $this->birthdayService->search($search);
         
@@ -50,28 +46,26 @@ class BirthdayController extends Controller
             throw new NotFoundException('No birthdays found');
         }
         
-        return BirthdayCollection::make(
-            $birthdays,
-        );
+        return response()->json($birthdays, Response::HTTP_OK);
     }
     
-    public function store(BirthdayStoreRequest $request): BirthdayResource
+    public function store(BirthdayStoreRequest $request): JsonResponse
     {
-        return BirthdayResource::make(
+        return response()->json(
             $this->birthdayService->createBirthday(
-                BirthdayDTO::fromRequest($request), 
-            ),
+                BirthdayDTO::fromRequest($request, auth()->user()->id), 
+            ), Response::HTTP_CREATED
         );
     }
     
-    public function update(BirthdayStoreRequest $request, Birthday $birthday): BirthdayResource
+    public function update(BirthdayUpdateRequest $request, Birthday $birthday): JsonResponse
     {
         $this->authorize('authorize', $birthday);
 
-        return BirthdayResource::make(
+        return response()->json(
             $this->birthdayService->updateBirthday(
-                $birthday, BirthdayDTO::fromRequest($request)
-            ),
+                $birthday, $request
+            ), Response::HTTP_OK
         );
     }
 
@@ -97,7 +91,7 @@ class BirthdayController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function archived(): BirthdayCollection
+    public function archived(): JsonResponse
     {
         $birthdays = $this->birthdayService->findAllTrashed();
 
@@ -105,8 +99,6 @@ class BirthdayController extends Controller
             throw new NotFoundException('No birthdays are archived');
         }
         
-        return BirthdayCollection::make(
-            $birthdays,
-        );
+        return response()->json($birthdays, Response::HTTP_OK);
     }
 }

@@ -20,11 +20,11 @@ class GroupDTO
         $this->user_id = $user_id;
     }
 
-    public static function fromRequest(GroupStoreRequest $request): GroupDTO {
+    public static function fromRequest(GroupStoreRequest $request, string $userId): GroupDTO {
         return new self(
             $request->input('name'),
             $request->input('description'),
-            auth()->user()->id
+            $userId
         );
     }
 }

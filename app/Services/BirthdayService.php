@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Services;
+
 use App\DTO\BirthdayDTO;
+use App\Http\Requests\BirthdayUpdateRequest;
 use App\Models\Birthday;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -37,16 +39,16 @@ class BirthdayService
         return $birthday;
     }
 
-    public function updateBirthday(Birthday $birthday, BirthdayDTO $birthdayDTO): Birthday
+    public function updateBirthday(Birthday $birthday, BirthdayUpdateRequest $request, $userId): Birthday
     {
         return tap($birthday)->update([
-            'name' => $birthdayDTO->name,
-            'title' => $birthdayDTO->title,
-            'phone_number' => $birthdayDTO->phone_number,
-            'body' => $birthdayDTO->body,
-            'birthday_date' => $birthdayDTO->birthday_date,
-            'user_id' => $birthdayDTO->user_id,
-            'group_id' => $birthdayDTO->group_id
+            'name' => $request->input('name'),
+            'title' => $request->input('title'),
+            'phone_number' => $request->input('phone_number'),
+            'body' => $request->input('body'),
+            'birthday_date' => $request->input('birthday_date'),
+            'user_id' => $userId,
+            'group_id' => $request->input('group_id')
         ]);
     }
     
