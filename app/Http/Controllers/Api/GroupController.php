@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\DTO\GroupDTO;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GroupStoreRequest;
-use App\Http\Requests\GroupUpdateRequest;
+use App\Http\Requests\{GroupStoreRequest, GroupUpdateRequest};
 use App\Models\Group;
 use App\Services\GroupService;
 use Illuminate\Http\{JsonResponse, Response};
@@ -53,7 +52,7 @@ class GroupController extends Controller
     {
         return response()->json(
             $this->groupService->createGroup(
-                GroupDTO::fromRequest($request, auth()->user()->id), 
+                GroupDTO::fromStoreRequest($request, auth()->user()->id), 
             ), Response::HTTP_OK
         );
     }
@@ -64,7 +63,7 @@ class GroupController extends Controller
 
         return response()->json(
             $this->groupService->updateGroup(
-                $group, $request, auth()->user()->id
+                $group, GroupDTO::fromUpdateRequest($request, auth()->user()->id)
             ), Response::HTTP_OK
         );
     }

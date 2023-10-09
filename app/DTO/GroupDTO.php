@@ -2,7 +2,8 @@
 
 namespace App\DTO;
 
-use App\Http\Requests\GroupStoreRequest;
+use App\Http\Requests\{GroupStoreRequest, GroupUpdateRequest};
+use Illuminate\Http\Request;
 
 class GroupDTO
 {
@@ -20,11 +21,21 @@ class GroupDTO
         $this->user_id = $user_id;
     }
 
-    public static function fromRequest(GroupStoreRequest $request, string $userId): GroupDTO {
+    public static function fromRequest(Request $request, string $userId): GroupDTO {
         return new self(
             $request->input('name'),
             $request->input('description'),
             $userId
         );
+    }
+
+    
+
+    public static function fromStoreRequest(GroupStoreRequest $request, $userId): GroupDTO {
+        return self::fromRequest($request, $userId);
+    }
+
+    public static function fromUpdateRequest(GroupUpdateRequest $request, $userId): GroupDTO {
+        return self::fromRequest($request, $userId);
     }
 }

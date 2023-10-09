@@ -53,7 +53,7 @@ class BirthdayController extends Controller
     {
         return response()->json(
             $this->birthdayService->createBirthday(
-                BirthdayDTO::fromRequest($request, auth()->user()->id), 
+                BirthdayDTO::fromStoreRequest($request, auth()->user()->id), 
             ), Response::HTTP_CREATED
         );
     }
@@ -64,7 +64,7 @@ class BirthdayController extends Controller
 
         return response()->json(
             $this->birthdayService->updateBirthday(
-                $birthday, $request
+                $birthday, BirthdayDTO::fromUpdateRequest($request, auth()->user()->id)
             ), Response::HTTP_OK
         );
     }
