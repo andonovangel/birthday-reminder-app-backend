@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTO\GroupDTO;
-use App\Http\Requests\GroupStoreRequest;
+use App\Http\Requests\{GroupStoreRequest, GroupUpdateRequest};
 use App\Models\{Birthday, Group};
 use App\Services\{BirthdayService, GroupService};
 use Illuminate\Http\Request;
@@ -34,7 +34,7 @@ class GroupController extends Controller
     public function createGroup(GroupStoreRequest $request)
     {
         $this->groupService->createGroup(
-            GroupDTO::fromRequest($request), 
+            GroupDTO::fromStoreRequest($request, auth()->user()->id), 
         );
 
         return redirect('/groups');
@@ -42,20 +42,20 @@ class GroupController extends Controller
 
     public function showEditGroup(Group $group)
     {
-        if (auth()->user()->id !== $group['user_id']) {
+        if (auth()->user()->id !== $group->user_id) {
             return redirect('/groups');
         }
         return view('group/edit-group', ['group' => $group]);
     }
 
-    public function editGroup(Group $group, GroupStoreRequest $request)
+    public function editGroup(Group $group, GroupUpdateRequest $request)
     {
-        if (auth()->user()->id !== $group['user_id']) {
+        if (auth()->user()->id !== $group->user_id) {
             return redirect('/groups');
         }
 
         $this->groupService->updateGroup(
-            $group, GroupDTO::fromRequest($request)
+            $group, GroupDTO::fromUpdateRequest($request, $group->user_id)
         );
 
         return redirect('/groups');
@@ -81,7 +81,7 @@ class GroupController extends Controller
 
     public function deleteGroup(Group $group)
     {
-        if (auth()->user()->id == $group['user_id']) {
+        if (auth()->user()->id == $group->user_id) {
             if ($group->trashed()) {
                 $group->forceDelete();
 
@@ -105,7 +105,7 @@ class GroupController extends Controller
         return redirect('/groups');
     }
 
-    public function restoreGroup(Group $group, Request $request)
+    public function restoreGroup(Group $group)
     {
         $group->restore();
 

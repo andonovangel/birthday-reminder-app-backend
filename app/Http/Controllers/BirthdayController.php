@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTO\BirthdayDTO;
-use App\Http\Requests\BirthdayStoreRequest;
+use App\Http\Requests\{BirthdayStoreRequest, BirthdayUpdateRequest};
 use App\Models\Birthday;
 use App\Services\{BirthdayService, GroupService};
 use Illuminate\Http\Request;
@@ -38,7 +38,7 @@ class BirthdayController extends Controller
     public function createBirthday(BirthdayStoreRequest $request)
     {
         $this->birthdayService->createBirthday(
-            BirthdayDTO::fromRequest($request)
+            BirthdayDTO::fromStoreRequest($request, auth()->user()->id)
         );
         
         return redirect('/');
@@ -58,14 +58,14 @@ class BirthdayController extends Controller
         return view('birthday/edit-birthday', ['birthday' => $birthday, 'groups' => $groups]);
     }
 
-    public function editBirthday(Birthday $birthday, BirthdayStoreRequest $request)
+    public function editBirthday(Birthday $birthday, BirthdayUpdateRequest $request)
     {
         if (auth()->user()->id !== $birthday->user_id) {
             return redirect('/');
         }
 
         $this->birthdayService->updateBirthday(
-            $birthday, BirthdayDTO::fromRequest($request)
+            $birthday, BirthdayDTO::fromUpdateRequest($request, $birthday->user_id)
         );
 
         return redirect('/');
