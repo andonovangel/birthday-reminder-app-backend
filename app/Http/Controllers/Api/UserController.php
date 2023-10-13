@@ -30,7 +30,7 @@ class UserController extends Controller
 
         $user = $this->userService->createUser(UserDTO::fromApiRequest($request));
         
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken(time())->plainTextToken;
 
         return response()
                 ->json(['user' => $user,
@@ -49,7 +49,7 @@ class UserController extends Controller
             return response()->json(['message' => 'Bad credentials'], Response::HTTP_UNAUTHORIZED);
         }
         
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken(time())->plainTextToken;
 
         return response()
                 ->json(['user' => $user,
