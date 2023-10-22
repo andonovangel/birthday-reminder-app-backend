@@ -82,6 +82,10 @@ class GroupController extends Controller
     public function restore(Group $group): JsonResponse
     {
         $this->authorize('authorize', $group);
+        
+        if (!$group->trashed()) {
+            throw new NotFoundException('Group not found');
+        }
 
         $group->restore();
 
