@@ -85,7 +85,7 @@ class BirthdayController extends Controller
 
     public function deleteBirthday(Birthday $birthday)
     {
-        if (auth()->user()->id == $birthday['user_id']) {
+        if (auth()->user()->id == $birthday->user_id) {
             if ($birthday->trashed()) {
                 $birthday->forceDelete();
 

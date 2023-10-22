@@ -83,6 +83,10 @@ class BirthdayController extends Controller
     public function restore(Birthday $birthday): JsonResponse
     {
         $this->authorize('authorize', $birthday);
+        
+        if (!$birthday->trashed()) {
+            throw new NotFoundException('Birthday not found');
+        }
 
         $birthday->restore();
 
