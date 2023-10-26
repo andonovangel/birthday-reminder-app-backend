@@ -21,7 +21,7 @@ class UserController extends Controller
     
     public function register(Request $request): JsonResponse {
         $incomiongFields = $request->validate([
-            'name' => ['required', 'min:3', 'max:10', Rule::unique('users', 'name')],
+            'name' => ['required', 'max:20', Rule::unique('users', 'name')],
             'email' => ['required', 'email', Rule::unique('users', 'email')],
             'password' => ['required', 'min:8', 'max:20']
         ]);
