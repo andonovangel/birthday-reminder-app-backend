@@ -25,9 +25,9 @@ class BirthdayStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'max:255'],
-            'title' => ['required', 'max:255'],
-            'body' => ['nullable', 'max:2000'],
+            'name' => ['required', 'max:50'],
+            'title' => ['required', 'max:50'],
+            'body' => ['nullable', 'max:200'],
             'phone_number' => ['nullable', 'numeric'],
             'birthday_date' => ['required', 'date'],
             'group_id' => 'nullable',

@@ -25,9 +25,9 @@ class BirthdayUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['sometimes', 'max:255'],
-            'title' => ['sometimes', 'max:255'],
-            'body' => ['sometimes', 'nullable', 'max:2000'],
+            'name' => ['sometimes', 'max:50'],
+            'title' => ['sometimes', 'max:50'],
+            'body' => ['sometimes', 'nullable', 'max:200'],
             'phone_number' => ['sometimes', 'nullable', 'numeric'],
             'birthday_date' => ['sometimes', 'date'],
             'group_id' => 'nullable',
