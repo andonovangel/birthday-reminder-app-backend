@@ -9,6 +9,7 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function() {
+    Route::put('/user-update', [UserController::class, 'update']);
     Route::post('/logout', [UserController::class, 'logout']);
 
     Route::get('/birthdays', [BirthdayController::class, 'index']);

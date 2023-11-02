@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\DTO\UserDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\{Request, Response, JsonResponse};
@@ -33,7 +34,7 @@ class UserController extends Controller
 
         $incomiongFields['password'] = bcrypt($incomiongFields['password']);
 
-        $user = $this->userService->createUser(UserDTO::fromApiRequest($request));
+        $user = $this->userService->createUser(UserDTO::fromRequest($request));
         
         $token = $user->createToken(time())->plainTextToken;
 
@@ -65,5 +66,13 @@ class UserController extends Controller
     {
         auth()->user()->tokens()->delete();
         return response()->json(['message' => 'Logged out']);
+    }
+
+    public function update(UserUpdateRequest $request)
+    {
+        $user = auth()->user();
+
+        $user->update($request->validated());
+        return response()->json($user, Response::HTTP_ACCEPTED);
     }
 }
