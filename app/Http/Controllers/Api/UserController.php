@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\DTO\UserDTO;
+use App\Events\UserUpdated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
@@ -68,11 +69,12 @@ class UserController extends Controller
         return response()->json(['message' => 'Logged out']);
     }
 
-    public function update(UserUpdateRequest $request)
+    public function update(UserUpdateRequest $request): JsonResponse
     {
         $user = auth()->user();
-
         $user->update($request->validated());
+        event(new UserUpdated($user));
+
         return response()->json($user, Response::HTTP_ACCEPTED);
     }
 }
