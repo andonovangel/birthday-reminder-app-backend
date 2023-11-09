@@ -2,8 +2,7 @@
 
 namespace App\DTO;
 
-use App\Http\Requests\BirthdayStoreRequest;
-use App\Http\Requests\BirthdayUpdateRequest;
+use App\Http\Requests\{BirthdayStoreRequest, BirthdayUpdateRequest};
 use Illuminate\Http\Request;
 
 class BirthdayDTO
@@ -34,7 +33,7 @@ class BirthdayDTO
         $this->group_id = $group_id;
     }
 
-    public static function fromRequest(Request $request, $userId): BirthdayDTO {
+    public static function fromRequest(Request $request, string $userId): BirthdayDTO {
         return new self(
             $request->input('name'),
             $request->input('title'),

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -43,13 +44,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function usersBirthdayReminders()
+    public function usersBirthdayReminders(): HasMany
     {
         return $this->hasMany(Birthday::class, 'user_id');
-    }
-
-    public function usersGroups()
-    {
-        return $this->hasMany(Group::class, 'user_id');
     }
 }

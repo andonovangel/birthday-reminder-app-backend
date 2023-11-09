@@ -2,7 +2,6 @@
 
 namespace App\DTO;
 
-use App\Http\Requests\UserUpdateRequest;
 use Illuminate\Http\Request;
 
 class UserDTO

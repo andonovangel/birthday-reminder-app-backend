@@ -29,13 +29,11 @@ class GroupDTO
         );
     }
 
-    
-
-    public static function fromStoreRequest(GroupStoreRequest $request, $userId): GroupDTO {
+    public static function fromStoreRequest(GroupStoreRequest $request, string $userId): GroupDTO {
         return self::fromRequest($request, $userId);
     }
 
-    public static function fromUpdateRequest(GroupUpdateRequest $request, $userId): GroupDTO {
+    public static function fromUpdateRequest(GroupUpdateRequest $request, string $userId): GroupDTO {
         return self::fromRequest($request, $userId);
     }
 }

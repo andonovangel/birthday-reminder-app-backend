@@ -12,7 +12,3 @@ use Illuminate\Support\Facades\Broadcast;
 | used to check if an authenticated user can listen to the channel.
 |
 */
-
-// Broadcast::channel('user-updates', function ($user, $user_id) {
-//     return $user->user_id === $user_id;
-// });

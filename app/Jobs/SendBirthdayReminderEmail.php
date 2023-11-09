@@ -5,11 +5,9 @@ namespace App\Jobs;
 use App\Mail\BirthdayMail;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\{InteractsWithQueue, SerializesModels};
 use Illuminate\Support\Facades\Mail;
 
 class SendBirthdayReminderEmail implements ShouldQueue
@@ -40,7 +38,7 @@ class SendBirthdayReminderEmail implements ShouldQueue
                 if ($birthdayDate <= date('Y-m-d H')) {
                     $birthday->birthday_date = date('Y-m-d H:i:s', strtotime('+1 year', strtotime($birthday->birthday_date)));
                     $birthday->update();
-                    Mail::to($this->user->email)->send(new BirthdayMail($birthday->name));
+                    Mail::to($this->user->email)->send(new BirthdayMail($birthday->name, $birthday->body));
                 }
             }
         }

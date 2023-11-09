@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use App\DTO\BirthdayDTO;
 use App\Models\Birthday;
 use Illuminate\Database\Eloquent\Collection;

@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\BirthdayController;
-use App\Http\Controllers\Api\GroupController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\{BirthdayController, GroupController, UserController};
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [UserController::class, 'register']);

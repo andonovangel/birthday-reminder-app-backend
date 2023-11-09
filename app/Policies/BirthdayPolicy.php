@@ -2,8 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Birthday;
-use App\Models\User;
+use App\Models\{Birthday, User};
 use Illuminate\Auth\Access\Response;
 
 class BirthdayPolicy

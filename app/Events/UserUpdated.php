@@ -28,7 +28,7 @@ class UserUpdated implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         return ['user-updates'];
     }
