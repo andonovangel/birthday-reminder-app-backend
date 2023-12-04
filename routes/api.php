@@ -6,9 +6,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 
-Route::group(['middleware' => ['auth:sanctum']], function() {
+Route::group(['middleware' => ['auth:sanctum', 'checkToken']], function() {
     Route::put('/user-update', [UserController::class, 'update']);
     Route::post('/logout', [UserController::class, 'logout']);
+    Route::get('/user', [UserController::class, 'getUser']);
 
     Route::get('/birthdays', [BirthdayController::class, 'index']);
     Route::get('/birthdays/{birthday}', [BirthdayController::class, 'show']);

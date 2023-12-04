@@ -9,6 +9,7 @@ use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\{Request, Response, JsonResponse};
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -40,8 +41,8 @@ class UserController extends Controller
         $token = $user->createToken(time())->plainTextToken;
 
         return response()
-                ->json(['user' => $user,
-                        'token' => $token]);
+                ->json(['user' => $user])
+                ->withCookie('token', $token, 60*24*7);
     }
     
     public function login(Request $request): JsonResponse {
@@ -59,14 +60,22 @@ class UserController extends Controller
         $token = $user->createToken(time())->plainTextToken;
 
         return response()
-                ->json(['user' => $user,
-                        'token' => $token]);
+                ->json(['user' => $user])
+                ->withCookie('token', $token, 60*24*7);
     }
 
     public function logout(): JsonResponse
     {
         auth()->user()->tokens()->delete();
-        return response()->json(['message' => 'Logged out']);
+
+        return response()
+                ->json(['message' => 'Logged out'])
+                ->withCookie(Cookie::forget('token'));
+    }
+
+    public function getUser(): JsonResponse
+    {
+        return response()->json(auth()->user(), Response::HTTP_ACCEPTED);
     }
 
     public function update(UserUpdateRequest $request): JsonResponse
