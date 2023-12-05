@@ -75,7 +75,7 @@ class UserController extends Controller
 
     public function getUser(): JsonResponse
     {
-        return response()->json(auth()->user(), Response::HTTP_ACCEPTED);
+        return response()->json(auth()->user(), Response::HTTP_OK);
     }
 
     public function update(UserUpdateRequest $request): JsonResponse
@@ -84,6 +84,6 @@ class UserController extends Controller
         $user->update($request->validated());
         event(new UserUpdated($user));
 
-        return response()->json($user, Response::HTTP_ACCEPTED);
+        return response()->json($user, Response::HTTP_OK);
     }
 }
