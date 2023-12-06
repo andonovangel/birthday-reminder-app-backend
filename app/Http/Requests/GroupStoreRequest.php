@@ -30,10 +30,10 @@ class GroupStoreRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                'max:255',
+                'max:50',
                 Rule::unique('groups')->where('user_id', $userId),
             ],
-            'description' => ['nullable', 'max:2000'],
+            'description' => ['nullable', 'max:200'],
         ];
     }
 

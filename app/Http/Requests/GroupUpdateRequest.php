@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class GroupUpdateRequest extends FormRequest
 {
@@ -24,13 +25,15 @@ class GroupUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $userId = auth()->user()->id;
         return [
             'name' => [
                 'sometimes',
                 'string',
-                'max:255',
+                'max:50',
+                Rule::unique('groups')->where('user_id', $userId),
             ],
-            'description' => ['sometimes', 'nullable', 'max:2000'],
+            'description' => ['sometimes', 'nullable', 'max:200'],
         ];
     }
 
