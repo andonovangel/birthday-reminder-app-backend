@@ -31,7 +31,7 @@ class GroupUpdateRequest extends FormRequest
                 'sometimes',
                 'string',
                 'max:50',
-                Rule::unique('groups')->where('user_id', $userId),
+                Rule::unique('groups', 'name')->where('user_id', $userId)->ignore($this->route('group')),
             ],
             'description' => ['sometimes', 'nullable', 'max:200'],
         ];
