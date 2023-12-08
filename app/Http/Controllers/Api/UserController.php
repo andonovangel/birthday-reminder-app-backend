@@ -10,12 +10,8 @@ use App\Mail\ResetPasswordMail;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\{Request, Response, JsonResponse};
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use Illuminate\Support\{Carbon, Str};
+use Illuminate\Support\Facades\{Cookie, DB, Hash, Mail};
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -43,11 +39,11 @@ class UserController extends Controller
 
         $user = $this->userService->createUser(UserDTO::fromRequest($request));
         
-        $token = $user->createToken(time())->plainTextToken;
+        $token = $user->createToken(time(), ['*'], now()->addWeek())->plainTextToken;
 
         return response()
-                ->json(['user' => $user])
-                ->withCookie('token', $token, 60*24*7);
+                ->json(['user' => $user], Response::HTTP_OK)
+                ->withCookie('token', $token, now()->addWeek());
     }
     
     public function login(Request $request): JsonResponse {
@@ -62,11 +58,11 @@ class UserController extends Controller
             return response()->json(['message' => 'Bad credentials'], Response::HTTP_UNAUTHORIZED);
         }
         
-        $token = $user->createToken(time())->plainTextToken;
+        $token = $user->createToken(time(), ['*'], now()->addWeek())->plainTextToken;
 
         return response()
-                ->json(['user' => $user])
-                ->withCookie('token', $token, 60*24*7);
+                ->json(['user' => $user], Response::HTTP_OK)
+                ->withCookie('token', $token, now()->addWeek());
     }
 
     public function logout(): JsonResponse
