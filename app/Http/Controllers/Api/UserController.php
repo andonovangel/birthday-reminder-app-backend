@@ -43,7 +43,7 @@ class UserController extends Controller
 
         return response()
                 ->json(['user' => $user], Response::HTTP_OK)
-                ->withCookie('token', $token, now()->addWeek());
+                ->withCookie('token', $token, 24*60*7);
     }
     
     public function login(Request $request): JsonResponse {
@@ -62,7 +62,7 @@ class UserController extends Controller
 
         return response()
                 ->json(['user' => $user], Response::HTTP_OK)
-                ->withCookie('token', $token, now()->addWeek());
+                ->withCookie('token', $token, 24*60*7);
     }
 
     public function logout(): JsonResponse
