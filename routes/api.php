@@ -5,11 +5,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
+Route::post('/password-reset', [UserController::class, 'sendResetPasswordEmail']);
+Route::post('/password-reset/{token}', [UserController::class, 'resetPassword']);
 
 Route::group(['middleware' => ['auth:sanctum', 'checkToken']], function() {
     Route::put('/user-update', [UserController::class, 'update']);
     Route::post('/logout', [UserController::class, 'logout']);
     Route::get('/user', [UserController::class, 'getUser']);
+    Route::post('/password-change', [UserController::class, 'changePassword']);
 
     Route::get('/birthdays', [BirthdayController::class, 'index']);
     Route::get('/birthdays/{birthday}', [BirthdayController::class, 'show']);

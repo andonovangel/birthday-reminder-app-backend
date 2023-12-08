@@ -9,21 +9,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class BirthdayMail extends Mailable
+class ResetPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public $name;
-    public $body;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(string $name, string $body)
-    {
-        $this->name = $name;
-        $this->body = $body;
-    }
+    public function __construct(public string $token) {}
 
     /**
      * Build the message.
@@ -32,8 +25,8 @@ class BirthdayMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Wish ' . $this->name . ' a happy birthday!')
-                    ->view('mail/birthday-mail');
+        return $this->subject('Reset your password')
+            ->view('mail/forget-password');
     }
 
     /**
