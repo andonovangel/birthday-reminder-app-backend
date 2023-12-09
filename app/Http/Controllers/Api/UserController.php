@@ -58,11 +58,16 @@ class UserController extends Controller
             return response()->json(['message' => 'Bad credentials'], Response::HTTP_UNAUTHORIZED);
         }
         
-        $token = $user->createToken(time(), ['*'], now()->addWeek())->plainTextToken;
+        $request->remember ? 
+            $token = $user->createToken(time(), ['*'], now()->addMonth())->plainTextToken : 
+            $token = $user->createToken(time(), ['*'], now()->addWeek())->plainTextToken;
+        $request->remember ? 
+            $expiration = 24*60*30 : 
+            $expiration = 24*60*7;
 
         return response()
                 ->json(['user' => $user], Response::HTTP_OK)
-                ->withCookie('token', $token, 24*60*7);
+                ->withCookie('token', $token, $expiration);
     }
 
     public function logout(): JsonResponse
