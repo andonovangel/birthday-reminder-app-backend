@@ -1,18 +1,18 @@
 <?php
 
-use App\Http\Controllers\Api\{BirthdayController, GroupController, UserController};
+use App\Http\Controllers\Api\{AuthController, BirthdayController, GroupController, UserController};
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', [UserController::class, 'register']);
-Route::post('/login', [UserController::class, 'login']);
-Route::post('/password-reset', [UserController::class, 'sendResetPasswordEmail']);
-Route::post('/password-reset/{token}', [UserController::class, 'resetPassword']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/password-reset', [AuthController::class, 'sendResetPasswordEmail']);
+Route::post('/password-reset/{token}', [AuthController::class, 'resetPassword']);
 
 Route::group(['middleware' => ['auth:sanctum', 'checkToken']], function() {
-    Route::put('/user-update', [UserController::class, 'update']);
-    Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [UserController::class, 'getUser']);
-    Route::post('/password-change', [UserController::class, 'changePassword']);
+    Route::put('/user', [UserController::class, 'update']);
+    Route::post('/password-change', [AuthController::class, 'changePassword']);
 
     Route::get('/birthdays', [BirthdayController::class, 'index']);
     Route::get('/birthdays/{birthday}', [BirthdayController::class, 'show']);
