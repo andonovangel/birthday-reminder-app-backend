@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\UserUpdated;
-use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckUserTokenIfActive
+class CheckIfUserIsAdmin
 {
     /**
      * Handle an incoming request.
@@ -15,7 +15,7 @@ class CheckUserTokenIfActive
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (request()->header('Cookie')) {
+        if (auth()->user()->role === 'Admin') {
             return $next($request);
         }
         else {

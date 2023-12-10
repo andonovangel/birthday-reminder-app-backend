@@ -10,7 +10,7 @@ Route::post('/password-reset/{token}', [AuthController::class, 'resetPassword'])
 
 Route::group(['middleware' => ['auth:sanctum', 'checkToken']], function() {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users', [UserController::class, 'index'])->middleware('admin');
     Route::get('/user', [UserController::class, 'getUser']);
     Route::put('/user', [UserController::class, 'update']);
     Route::post('/password-change', [AuthController::class, 'changePassword']);
