@@ -62,6 +62,8 @@ class AuthController extends Controller
             $expiration = 24*60*30 : 
             $expiration = 24*60*7;
 
+        $user->update(['last_login' => now()]);
+
         return response()
                 ->json(['user' => $user], Response::HTTP_OK)
                 ->withCookie('token', $token, $expiration);
