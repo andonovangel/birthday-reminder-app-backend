@@ -4,22 +4,22 @@ namespace App\Services;
 
 use App\DTO\BirthdayDTO;
 use App\Models\Birthday;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\{Builder, Collection};
 
 class BirthdayService
 {
-    public function findAll(): mixed {
-        return Birthday::where('user_id', auth()->user()->id)->get();
+    public function findAll(): Builder {
+        return Birthday::where('user_id', auth()->user()->id);
     }
 
     public function search(string $search): Collection {
         return Birthday::where('user_id', auth()->user()->id)
             ->where(function($query) use ($search) {
-                        $query->where('name', 'like', "%$search%")
-                            ->orWhere('title', 'like', "%$search%") 
-                            ->orWhere('phone_number', 'like', "%$search%")
-                            ->orWhere('body', 'like', "%$search%");
-                    })->get();
+                $query->where('name', 'like', "%$search%")
+                    ->orWhere('title', 'like', "%$search%") 
+                    ->orWhere('phone_number', 'like', "%$search%")
+                    ->orWhere('body', 'like', "%$search%");
+            })->get();
     }
 
     public function createBirthday(BirthdayDTO $birthdayDTO): Birthday

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\DTO\BirthdayDTO;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\{BirthdayStoreRequest, BirthdayUpdateRequest};
+use App\Http\Requests\{BirthdayListRequest, BirthdayStoreRequest, BirthdayUpdateRequest};
 use App\Models\Birthday;
 use App\Services\BirthdayService;
 use Illuminate\Http\{JsonResponse, Response};
@@ -19,9 +19,12 @@ class BirthdayController extends Controller
         $this->birthdayService = $birthdayService;
     }
 
-    public function index(): JsonResponse 
+    public function index(BirthdayListRequest $request): JsonResponse 
     {
-        $birthdays = $this->birthdayService->findAll();
+        $birthdays = $this->birthdayService->findAll()
+        ->when($request->sortBy && $request->sortOrder, function ($query) use ($request) {
+            $query->orderBy($request->sortBy, $request->sortOrder);
+        })->get();
         
         if ($birthdays->isEmpty()) {
             throw new NotFoundException('No birthdays found');
