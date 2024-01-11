@@ -12,12 +12,7 @@ use Illuminate\Http\{JsonResponse, Response};
 
 class BirthdayController extends Controller
 {
-    private BirthdayService $birthdayService;
-
-    public function __construct(BirthdayService $birthdayService)
-    {
-        $this->birthdayService = $birthdayService;
-    }
+    public function __construct(private BirthdayService $birthdayService) {}
 
     public function index(BirthdayListRequest $request): JsonResponse 
     {

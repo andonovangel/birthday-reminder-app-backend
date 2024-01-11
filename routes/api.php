@@ -32,6 +32,7 @@ Route::group(['middleware' => ['auth:sanctum', 'checkToken']], function() {
     // Groups
     Route::get('/groups', [GroupController::class, 'index']);
     Route::get('/groups/{group}', [GroupController::class, 'show']);
+    Route::get('/groups/{group}/birthdays', [GroupController::class, 'list']);
     Route::get('/groups/search/{search}', [GroupController::class, 'search']);
     Route::get('/archived-groups', [GroupController::class, 'archived']);
     Route::post('/groups', [GroupController::class, 'store']);

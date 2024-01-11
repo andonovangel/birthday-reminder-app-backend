@@ -6,18 +6,15 @@ use App\DTO\GroupDTO;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{GroupStoreRequest, GroupUpdateRequest};
+use App\Models\Birthday;
 use App\Models\Group;
+use App\Services\BirthdayService;
 use App\Services\GroupService;
 use Illuminate\Http\{JsonResponse, Response};
 
 class GroupController extends Controller
 {
-    private GroupService $groupService;
-
-    public function __construct(GroupService $groupService)
-    {
-        $this->groupService = $groupService;
-    }
+    public function __construct(private GroupService $groupService, private BirthdayService $birthdayService) {}
 
     public function index(): JsonResponse 
     {
@@ -32,9 +29,16 @@ class GroupController extends Controller
 
     public function show(Group $group): JsonResponse 
     {
-        $this->authorize('authorize', $group);
-        
         return response()->json($group, Response::HTTP_OK);
+    }
+
+    public function list(Group $group): JsonResponse 
+    {
+        $birthdays = $this->birthdayService->findAll()
+            ->where('group_id', $group->id)
+            ->get();
+
+        return response()->json($birthdays, Response::HTTP_OK);
     }
 
     public function search(string $search): JsonResponse 
