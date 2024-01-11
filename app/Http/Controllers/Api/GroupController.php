@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\DTO\GroupDTO;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\{GroupStoreRequest, GroupUpdateRequest};
+use App\Http\Requests\{BirthdayListRequest, GroupStoreRequest, GroupUpdateRequest};
 use App\Models\Birthday;
 use App\Models\Group;
 use App\Services\BirthdayService;
@@ -32,11 +32,13 @@ class GroupController extends Controller
         return response()->json($group, Response::HTTP_OK);
     }
 
-    public function list(Group $group): JsonResponse 
+    public function list(Group $group, BirthdayListRequest $request): JsonResponse 
     {
         $birthdays = $this->birthdayService->findAll()
             ->where('group_id', $group->id)
-            ->get();
+            ->when($request->sortBy && $request->sortOrder, function ($query) use ($request) {
+                $query->orderBy($request->sortBy, $request->sortOrder);
+            })->get();
 
         return response()->json($birthdays, Response::HTTP_OK);
     }
