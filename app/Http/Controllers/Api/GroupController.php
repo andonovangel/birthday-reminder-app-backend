@@ -6,7 +6,6 @@ use App\DTO\GroupDTO;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{BirthdayListRequest, GroupStoreRequest, GroupUpdateRequest};
-use App\Models\Birthday;
 use App\Models\Group;
 use App\Services\BirthdayService;
 use App\Services\GroupService;
@@ -29,6 +28,7 @@ class GroupController extends Controller
 
     public function show(Group $group): JsonResponse 
     {
+        $this->authorize('authorize', $group);
         return response()->json($group, Response::HTTP_OK);
     }
 
