@@ -71,6 +71,16 @@ Make sure to update your frontend or any client application to make requests to 
 
 Feel free to customize the backend according to your needs, and refer to the Laravel documentation for additional details on extending functionality or securing your API.
 
+## Link to birthday-reminder-app-frontend
+
+Check the [frontend repository](https://github.com/andonovangel/birthday-reminder-app-frontend) of **memoflcik**
+
+###Relationship Explanation:
+
+- [birthday-reminder-app-frontend](https://github.com/andonovangel/birthday-reminder-app-frontend) focuses on the user interface and client-side functionality. It contains the code for the web application's user interface, design, and user interactions.
+- birthday-reminder-app-backend complements this by providing the server-side logic, database interactions, and overall backend functionality. It handles data processing, business logic, and communicates with the frontend to deliver a complete web application experience.
+- Together, they form a comprehensive full-stack web application, where the frontend interacts with the backend to create a seamless and functional user experience.
+
 ## Contact
 
 Have questions, suggestions, or just want to say hello? I'd love to hear from you!
