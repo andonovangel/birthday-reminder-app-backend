@@ -54,7 +54,7 @@ php artisan serve
 ```
 The backend API will be accessible at http://localhost:8000.
 
-API Endpoints
+### API Endpoints
 The backend provides the following API endpoints:
 
 GET /api/birthdays: Retrieve all birthdays.
