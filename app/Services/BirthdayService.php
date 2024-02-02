@@ -4,12 +4,24 @@ namespace App\Services;
 
 use App\DTO\BirthdayDTO;
 use App\Models\Birthday;
-use Illuminate\Database\Eloquent\{Builder, Collection};
+use Illuminate\Database\Eloquent\Collection;
 
 class BirthdayService
 {
-    public function findAll(): Builder {
+    public function findAll(): mixed {
         return Birthday::where('user_id', auth()->user()->id);
+    }
+
+    public function find(string $id): Birthday {
+        return Birthday::where('user_id', auth()->user()->id)->findOrFail($id);
+    }
+    
+    public function findAllTrashed(): mixed {
+        return Birthday::where('user_id', auth()->user()->id)->onlyTrashed()->get();
+    }
+
+    public function findWithTrashed(string $id): Birthday {
+        return Birthday::where('user_id', auth()->user()->id)->withTrashed()->findOrFail($id);
     }
 
     public function search(string $search): Collection {
@@ -49,9 +61,5 @@ class BirthdayService
             'user_id' => $birthdayDTO->user_id,
             'group_id' => $birthdayDTO->group_id
         ]);
-    }
-    
-    public function findAllTrashed(): mixed {
-        return Birthday::where('user_id', auth()->user()->id)->onlyTrashed()->get();
     }
 }

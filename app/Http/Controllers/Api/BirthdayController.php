@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\DTO\BirthdayDTO;
-use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{BirthdayListRequest, BirthdayStoreRequest, BirthdayUpdateRequest};
-use App\Models\Birthday;
 use App\Services\BirthdayService;
+use Exception;
 use Illuminate\Http\{JsonResponse, Response};
 
 class BirthdayController extends Controller
@@ -28,11 +27,14 @@ class BirthdayController extends Controller
         return response()->json($birthdays, Response::HTTP_OK);
     }
 
-    public function show(Birthday $birthday): JsonResponse 
+    public function show(string $id): JsonResponse 
     {
-        $this->authorize('authorize', $birthday);
-        
-        return response()->json($birthday, Response::HTTP_OK);
+        try {
+            $birthday = $this->birthdayService->find($id);
+            return response()->json($birthday, Response::HTTP_OK);
+        } catch(Exception $e) {
+            return  response()->json(['message' => 'Birthday not found'], Response::HTTP_NOT_FOUND);
+        }
     }
 
     public function search(string $search): JsonResponse 
@@ -55,41 +57,50 @@ class BirthdayController extends Controller
         );
     }
     
-    public function update(BirthdayUpdateRequest $request, Birthday $birthday): JsonResponse
+    public function update(BirthdayUpdateRequest $request, string $id): JsonResponse
     {
-        $this->authorize('authorize', $birthday);
-
-        return response()->json(
-            $this->birthdayService->updateBirthday(
-                $birthday, BirthdayDTO::fromUpdateRequest($request, auth()->user()->id)
-            ), Response::HTTP_OK
-        );
-    }
-
-    public function destroy(Birthday $birthday): JsonResponse
-    {
-        $this->authorize('authorize', $birthday);
-
-        $birthday->trashed() ? $birthday->forceDelete() : $birthday->delete();
-        
-        return response()->json([
-            'message' => "Birthday with id: '$birthday->id' was successfuly deleted"
-        ], Response::HTTP_OK);
-    }
-
-    public function restore(Birthday $birthday): JsonResponse
-    {
-        $this->authorize('authorize', $birthday);
-        
-        if (!$birthday->trashed()) {
-            return response()->json('Birthday not found', Response::HTTP_NOT_FOUND);
+        try {
+            $birthday = $this->birthdayService->find($id);
+            return response()->json(
+                $this->birthdayService->updateBirthday(
+                    $birthday, BirthdayDTO::fromUpdateRequest($request, auth()->user()->id, $birthday)
+                ), Response::HTTP_OK
+            );
+        } catch(Exception $e) {
+            return  response()->json(['message' => 'Birthday not found'], Response::HTTP_NOT_FOUND);
         }
+    }
 
-        $birthday->restore();
+    public function destroy(string $id): JsonResponse
+    {
+        try {
+            $birthday = $this->birthdayService->findWithTrashed($id);
+            $birthday->trashed() ? $birthday->forceDelete() : $birthday->delete();
+            
+            return response()->json([
+                'message' => "Birthday with id: '$birthday->id' was successfuly deleted"
+            ], Response::HTTP_OK);
+        } catch(Exception $e) {
+            return  response()->json(['message' => 'Birthday not found'], Response::HTTP_NOT_FOUND);
+        }        
+    }
 
-        return response()->json([
-            'message' => "Birthday with id: '$birthday->id' was successfuly restored"
-        ], Response::HTTP_OK);
+    public function restore(string $id): JsonResponse
+    {
+        try {
+            $birthday = $this->birthdayService->findWithTrashed($id);        
+            if (!$birthday->trashed()) {
+                return response()->json('Birthday not found', Response::HTTP_NOT_FOUND);
+            }
+    
+            $birthday->restore();
+    
+            return response()->json([
+                'message' => "Birthday with id: '$birthday->id' was successfuly restored"
+            ], Response::HTTP_OK);
+        } catch(Exception $e) {
+            return  response()->json(['message' => 'Birthday not found'], Response::HTTP_NOT_FOUND);
+        }
     }
 
     public function archived(): JsonResponse

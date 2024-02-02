@@ -21,13 +21,13 @@ Route::group(['middleware' => ['auth:sanctum', 'checkToken']], function() {
 
     // Birthdays
     Route::get('/birthdays', [BirthdayController::class, 'index']);
-    Route::get('/birthdays/{birthday}', [BirthdayController::class, 'show']);
+    Route::get('/birthdays/{id}', [BirthdayController::class, 'show']);
     Route::get('/birthdays/search/{search}', [BirthdayController::class, 'search']);
     Route::get('/archived-birthdays', [BirthdayController::class, 'archived']);
     Route::post('/birthdays', [BirthdayController::class, 'store']);
-    Route::put('/birthdays/{birthday}', [BirthdayController::class, 'update']);
-    Route::delete('/birthdays/{birthday}', [BirthdayController::class, 'destroy'])->withTrashed();
-    Route::post('/restore-birthday/{birthday}', [BirthdayController::class, 'restore'])->withTrashed();
+    Route::put('/birthdays/{id}', [BirthdayController::class, 'update']);
+    Route::delete('/birthdays/{id}', [BirthdayController::class, 'destroy']);
+    Route::post('/restore-birthday/{id}', [BirthdayController::class, 'restore']);
 
     // Groups
     Route::get('/groups', [GroupController::class, 'index']);
