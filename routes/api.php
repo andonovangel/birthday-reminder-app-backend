@@ -31,12 +31,12 @@ Route::group(['middleware' => ['auth:sanctum', 'checkToken']], function() {
 
     // Groups
     Route::get('/groups', [GroupController::class, 'index']);
-    Route::get('/groups/{group}', [GroupController::class, 'show']);
-    Route::get('/groups/{group}/birthdays', [GroupController::class, 'list']);
+    Route::get('/groups/{id}', [GroupController::class, 'show']);
+    Route::get('/groups/{id}/birthdays', [GroupController::class, 'list']);
     Route::get('/groups/search/{search}', [GroupController::class, 'search']);
     Route::get('/archived-groups', [GroupController::class, 'archived']);
     Route::post('/groups', [GroupController::class, 'store']);
-    Route::put('/groups/{group}', [GroupController::class, 'update']);
-    Route::delete('/groups/{group}', [GroupController::class, 'destroy'])->withTrashed();
-    Route::post('/restore-group/{group}', [GroupController::class, 'restore'])->withTrashed();
+    Route::put('/groups/{id}', [GroupController::class, 'update']);
+    Route::delete('/groups/{id}', [GroupController::class, 'destroy']);
+    Route::post('/restore-group/{id}', [GroupController::class, 'restore']);
 });

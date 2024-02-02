@@ -12,6 +12,18 @@ class GroupService
         return Group::where('user_id', auth()->user()->id)->get();
     }
 
+    public function find(string $id): Group {
+        return Group::where('user_id', auth()->user()->id)->findOrFail($id);
+    }
+    
+    public function findAllTrashed(): mixed {
+        return Group::where('user_id', auth()->user()->id)->onlyTrashed()->get();
+    }
+
+    public function findWithTrashed(string $id): Group {
+        return Group::where('user_id', auth()->user()->id)->withTrashed()->findOrFail($id);
+    }
+
     public function search(string $search): Collection {
         return Group::where('user_id', auth()->user()->id)
             ->where(function($query) use ($search) {
@@ -39,9 +51,5 @@ class GroupService
             'description' => $groupDTO->description,
             'user_id' => $groupDTO->user_id,
         ]);
-    }
-    
-    public function findAllTrashed(): mixed {
-        return Group::where('user_id', auth()->user()->id)->onlyTrashed()->get();
     }
 }

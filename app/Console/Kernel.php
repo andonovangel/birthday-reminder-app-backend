@@ -17,6 +17,10 @@ class Kernel extends ConsoleKernel
         // $schedule->command('auto:birthdayremind')->daily();
         // $schedule->command('auto:birthdayremind')->everyMinute();
 
+        // collect(User::all())->each(function ($user) {
+        //     dispatch(new SendBirthdayReminderEmail($user));
+        // })->everyMinute();
+
         foreach (User::all() as $user) {
             $schedule->job(new SendBirthdayReminderEmail($user))->everyMinute();
         }

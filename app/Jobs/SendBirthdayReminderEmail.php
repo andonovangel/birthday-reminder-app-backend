@@ -38,7 +38,7 @@ class SendBirthdayReminderEmail implements ShouldQueue
                 if ($birthdayDate <= date('Y-m-d H')) {
                     $birthday->birthday_date = date('Y-m-d H:i:s', strtotime('+1 year', strtotime($birthday->birthday_date)));
                     $birthday->update();
-                    Mail::to($this->user->email)->send(new BirthdayMail($birthday->name, $birthday->body));
+                    Mail::to($this->user->email)->send(new BirthdayMail($birthday->name, $birthday->body, $birthday->phone_number));
                 }
             }
         }

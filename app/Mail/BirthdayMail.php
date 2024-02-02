@@ -13,17 +13,10 @@ class BirthdayMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $name;
-    public $body;
-
     /**
      * Create a new message instance.
      */
-    public function __construct(string $name, string $body)
-    {
-        $this->name = $name;
-        $this->body = $body;
-    }
+    public function __construct(public string $name, public ?string $body = '', public ?string $phone_number) {}
 
     /**
      * Build the message.

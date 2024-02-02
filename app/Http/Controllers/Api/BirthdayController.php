@@ -22,7 +22,7 @@ class BirthdayController extends Controller
         })->get();
         
         if ($birthdays->isEmpty()) {
-            throw new NotFoundException('No birthdays found');
+            return response()->json('No birthdays found', Response::HTTP_NOT_FOUND);
         }
         
         return response()->json($birthdays, Response::HTTP_OK);
@@ -40,7 +40,7 @@ class BirthdayController extends Controller
         $birthdays = $this->birthdayService->search($search);
         
         if ($birthdays->isEmpty()) {
-            throw new NotFoundException('No birthdays found');
+            return response()->json('No birthdays found', Response::HTTP_NOT_FOUND);
         }
         
         return response()->json($birthdays, Response::HTTP_OK);
@@ -82,7 +82,7 @@ class BirthdayController extends Controller
         $this->authorize('authorize', $birthday);
         
         if (!$birthday->trashed()) {
-            throw new NotFoundException('Birthday not found');
+            return response()->json('Birthday not found', Response::HTTP_NOT_FOUND);
         }
 
         $birthday->restore();
@@ -97,7 +97,7 @@ class BirthdayController extends Controller
         $birthdays = $this->birthdayService->findAllTrashed();
 
         if ($birthdays->isEmpty()) {
-            throw new NotFoundException('No birthdays are archived');
+            return response()->json('No birthdays are archived', Response::HTTP_NOT_FOUND);
         }
         
         return response()->json($birthdays, Response::HTTP_OK);

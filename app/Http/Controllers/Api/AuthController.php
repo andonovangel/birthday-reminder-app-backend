@@ -14,11 +14,7 @@ use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
-    private UserService $userService;
-
-    public function __construct(UserService $userService) {
-        $this->userService = $userService;
-    }
+    public function __construct(private UserService $userService) {}
     
     public function register(Request $request): JsonResponse {
         $incomiongFields = $request->validate([
