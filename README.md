@@ -71,7 +71,9 @@ Feel free to customize the backend according to your needs, and refer to the Lar
 Have questions, suggestions, or just want to say hello? I'd love to hear from you!
 
 Email: andonovangel1@gmail.com
+
 LinkedIn: [Angel Andonov](https://www.linkedin.com/in/andonovangel/)
+
 Feel free to reach out for any inquiries related to **memoflick**. We value your feedback and are always open to collaboration and improvement.
 
 Happy birthday celebrating! 🎂🎉
