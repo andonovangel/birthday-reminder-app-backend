@@ -76,10 +76,6 @@ PUT /api/birthdays/{id}: Update a birthday.
 
 DELETE /api/birthdays/{id}: Delete a birthday.
 
-Make sure to update your frontend or any client application to make requests to these endpoints based on your requirements.
-
-Feel free to customize the backend according to your needs, and refer to the Laravel documentation for additional details on extending functionality or securing your API.
-
 ## Link to birthday-reminder-app-frontend
 
 Check the [frontend repository](https://github.com/andonovangel/birthday-reminder-app-frontend) of **memoflick**
