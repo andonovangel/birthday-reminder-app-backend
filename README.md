@@ -73,9 +73,9 @@ Feel free to customize the backend according to your needs, and refer to the Lar
 
 ## Link to birthday-reminder-app-frontend
 
-Check the [frontend repository](https://github.com/andonovangel/birthday-reminder-app-frontend) of **memoflcik**
+Check the [frontend repository](https://github.com/andonovangel/birthday-reminder-app-frontend) of **memoflick**
 
-###Relationship Explanation:
+### Relationship Explanation:
 
 - [birthday-reminder-app-frontend](https://github.com/andonovangel/birthday-reminder-app-frontend) focuses on the user interface and client-side functionality. It contains the code for the web application's user interface, design, and user interactions.
 - birthday-reminder-app-backend complements this by providing the server-side logic, database interactions, and overall backend functionality. It handles data processing, business logic, and communicates with the frontend to deliver a complete web application experience.
