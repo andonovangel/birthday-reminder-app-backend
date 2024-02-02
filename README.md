@@ -58,10 +58,15 @@ API Endpoints
 The backend provides the following API endpoints:
 
 GET /api/birthdays: Retrieve all birthdays.
+
 GET /api/birthdays/{id}: Retrieve a specific birthday.
+
 POST /api/birthdays: Add a new birthday.
+
 PUT /api/birthdays/{id}: Update a birthday.
+
 DELETE /api/birthdays/{id}: Delete a birthday.
+
 Make sure to update your frontend or any client application to make requests to these endpoints based on your requirements.
 
 Feel free to customize the backend according to your needs, and refer to the Laravel documentation for additional details on extending functionality or securing your API.
