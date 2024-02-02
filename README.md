@@ -8,6 +8,12 @@ Welcome to **memoflick**! 🎉
 
 Remembering and celebrating the birthdays of our loved ones can sometimes be challenging in our busy lives. **Memoflick** is here to make that task effortless and enjoyable. This user-friendly application serves as your personal assistant, helping you keep track of important birthdays and ensuring you never miss an opportunity to send warm wishes.
 
+### Built With
+
+- https://laravel.com/
+- https://angular.io/
+- https://getbootstrap.com/
+
 ## Features
 
 1. Intuitive Interface
