@@ -29,17 +29,14 @@ class SendBirthdayReminderEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        $birthdays = [];
-        if ($this->user){
-            $birthdays = $this->user->usersBirthdayReminders()->get();
+        $birthdays = $this->user->usersBirthdayReminders()->get();
 
-            foreach ($birthdays as $birthday) {
-                $birthdayDate = date('Y-m-d H', strtotime($birthday->birthday_date));
-                if ($birthdayDate <= date('Y-m-d H')) {
-                    $birthday->birthday_date = date('Y-m-d H:i:s', strtotime('+1 year', strtotime($birthday->birthday_date)));
-                    $birthday->update();
-                    Mail::to($this->user->email)->send(new BirthdayMail($birthday->name, $birthday->body, $birthday->phone_number));
-                }
+        foreach ($birthdays as $birthday) {
+            $birthdayDate = date('Y-m-d H', strtotime($birthday->birthday_date));
+            if ($birthdayDate <= date('Y-m-d H')) {
+                $birthday->birthday_date = date('Y-m-d H:i:s', strtotime('+1 year', strtotime($birthday->birthday_date)));
+                $birthday->update();
+                Mail::to($this->user->email)->send(new BirthdayMail($birthday->name, $birthday->body, $birthday->phone_number));
             }
         }
     }

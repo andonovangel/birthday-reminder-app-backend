@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BirthdayController;
-use App\Http\Controllers\MailController;
 
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/logout', [UserController::class, 'logout']);
@@ -27,5 +26,3 @@ Route::get('/remove-from-group/{birthday}', [GroupController::class, 'removeFrom
 Route::get('/groups/archived-groups', [GroupController::class, 'archivedGroups']);
 Route::delete('/delete-group/{group}', [GroupController::class, 'deleteGroup'])->withTrashed();
 Route::post('restore-group/{group}', [GroupController::class, 'restoreGroup'])->withTrashed();
-
-Route::get('/send-email', [MailController::class, 'sendMail']);

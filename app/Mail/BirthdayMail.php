@@ -3,10 +3,7 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class BirthdayMail extends Mailable
@@ -16,7 +13,7 @@ class BirthdayMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $name, public ?string $body = '', public ?string $phone_number) {}
+    public function __construct(public string $name, public ?string $body = null, public ?string $phone_number = null) {}
 
     /**
      * Build the message.
