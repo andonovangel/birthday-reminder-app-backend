@@ -63,7 +63,7 @@ class BirthdayController extends Controller
             $birthday = $this->birthdayService->find($id);
             return response()->json(
                 $this->birthdayService->updateBirthday(
-                    $birthday, BirthdayDTO::fromUpdateRequest($request, auth()->user()->id, $birthday)
+                    $birthday, BirthdayDTO::fromUpdateRequest($request, auth()->user()->id)
                 ), Response::HTTP_OK
             );
         } catch(Exception $e) {
