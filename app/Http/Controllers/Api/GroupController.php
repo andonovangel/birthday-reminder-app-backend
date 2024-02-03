@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\DTO\GroupDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{BirthdayListRequest, GroupStoreRequest, GroupUpdateRequest};
+use App\Models\Birthday;
 use App\Services\BirthdayService;
 use App\Services\GroupService;
 use Exception;
@@ -84,6 +85,11 @@ class GroupController extends Controller
     {
         try {
             $group = $this->groupService->findWithTrashed($id);
+
+            $birthdays = $this->birthdayService->findAll()->where('group_id', $id)->get();
+            Birthday::whereIn('id', $birthdays->pluck('id')->toArray())
+                ->update(['group_id' => null]);
+                
             $group->trashed() ? $group->forceDelete() : $group->delete();
             
             return response()->json([
