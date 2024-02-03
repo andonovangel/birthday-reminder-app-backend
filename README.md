@@ -94,6 +94,6 @@ Email: andonovangel1@gmail.com
 
 LinkedIn: [Angel Andonov](https://www.linkedin.com/in/andonovangel/)
 
-Feel free to reach out for any inquiries related to **memoflick**. We value your feedback and are always open to collaboration and improvement.
+Feel free to reach out for any inquiries related to **memoflick**. I value your feedback and always open for collaboration and improvements.
 
 Happy birthday celebrating! 🎂🎉
