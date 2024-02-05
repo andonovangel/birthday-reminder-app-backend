@@ -20,10 +20,6 @@ class BirthdayController extends Controller
             $query->orderBy($request->sortBy, $request->sortOrder);
         })->get();
         
-        if ($birthdays->isEmpty()) {
-            return response()->json('No birthdays found', Response::HTTP_NOT_FOUND);
-        }
-        
         return response()->json($birthdays, Response::HTTP_OK);
     }
 
@@ -39,12 +35,7 @@ class BirthdayController extends Controller
 
     public function search(string $search): JsonResponse 
     {
-        $birthdays = $this->birthdayService->search($search);
-        
-        if ($birthdays->isEmpty()) {
-            return response()->json('No birthdays found', Response::HTTP_NOT_FOUND);
-        }
-        
+        $birthdays = $this->birthdayService->search($search);        
         return response()->json($birthdays, Response::HTTP_OK);
     }
     
@@ -106,11 +97,6 @@ class BirthdayController extends Controller
     public function archived(): JsonResponse
     {
         $birthdays = $this->birthdayService->findAllTrashed();
-
-        if ($birthdays->isEmpty()) {
-            return response()->json('No birthdays are archived', Response::HTTP_NOT_FOUND);
-        }
-        
         return response()->json($birthdays, Response::HTTP_OK);
     }
 }

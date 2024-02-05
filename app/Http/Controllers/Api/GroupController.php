@@ -17,12 +17,7 @@ class GroupController extends Controller
 
     public function index(): JsonResponse 
     {
-        $groups = $this->groupService->findAll();
-        
-        if ($groups->isEmpty()) {
-            return response()->json('No groups found', Response::HTTP_NOT_FOUND);
-        }
-        
+        $groups = $this->groupService->findAll();        
         return response()->json($groups, Response::HTTP_OK);
     }
 
@@ -49,12 +44,7 @@ class GroupController extends Controller
 
     public function search(string $search): JsonResponse 
     {
-        $groups = $this->groupService->search($search);
-        
-        if ($groups->isEmpty()) {
-            return response()->json('No groups found', Response::HTTP_NOT_FOUND);
-        }
-        
+        $groups = $this->groupService->search($search);        
         return response()->json($groups, Response::HTTP_OK);
     }
     
@@ -120,12 +110,7 @@ class GroupController extends Controller
 
     public function archived(): JsonResponse
     {
-        $groups = $this->groupService->findAllTrashed();
-
-        if ($groups->isEmpty()) {
-            return response()->json('No groups are archived', Response::HTTP_NOT_FOUND);
-        }
-        
+        $groups = $this->groupService->findAllTrashed();        
         return response()->json($groups, Response::HTTP_OK);
     }
 }
