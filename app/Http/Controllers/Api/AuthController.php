@@ -48,7 +48,7 @@ class AuthController extends Controller
         $user = User::where('email', $incomiongFields['email'])->first();
 
         if (!$user || !Hash::check($incomiongFields['password'], $user->password)) {
-            return response()->json(['message' => 'Bad credentials'], Response::HTTP_UNAUTHORIZED);
+            return response()->json(['message' => 'Incorrect email or password'], Response::HTTP_UNAUTHORIZED);
         }
         
         $request->remember ? 
