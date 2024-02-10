@@ -20,11 +20,9 @@ class AuthController extends Controller
         $incomiongFields = $request->validate([
             'name' => ['required', 'max:20', Rule::unique('users', 'name')],
             'email' => ['required', 'email', Rule::unique('users', 'email')],
-            'confirmationEmail' => ['required', 'email', 'same:email'],
             'password' => ['required', 'min:8', 'max:20'],
             'confirmationPassword' => ['required', 'min:8', 'max:20', 'same:password']
         ], [
-            'confirmationEmail.same' => 'Emails do not match.',
             'confirmationPassword.same' => 'Passwords do not match.',
         ]);
 
