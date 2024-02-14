@@ -24,7 +24,8 @@ class BirthdayListRequest extends FormRequest
     {
         return [
             'sortBy' => Rule::in(['title', 'birthday_date']),
-            'sortOrder' => Rule::in(['asc', 'desc']), 
+            'sortOrder' => Rule::in(['asc', 'desc']),
+            'date' => 'date_format:Y-m-d',
         ];
     }
 

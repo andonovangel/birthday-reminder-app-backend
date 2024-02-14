@@ -16,9 +16,13 @@ class BirthdayController extends Controller
     public function index(BirthdayListRequest $request): JsonResponse 
     {
         $birthdays = $this->birthdayService->findAll()
-        ->when($request->sortBy && $request->sortOrder, function ($query) use ($request) {
-            $query->orderBy($request->sortBy, $request->sortOrder);
-        })->get();
+            ->when($request->sortBy && $request->sortOrder, function ($query) use ($request) {
+                $query->orderBy($request->sortBy, $request->sortOrder);
+            })
+            ->when($request->date, function ($query) use ($request) {
+                $query->whereDate('birthday_date', $request->date);
+            })
+            ->get();
         
         return response()->json($birthdays, Response::HTTP_OK);
     }
