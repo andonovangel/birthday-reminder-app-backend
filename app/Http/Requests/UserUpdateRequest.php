@@ -27,6 +27,8 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             'username' => ['max:20', Rule::unique('users', 'username')->ignore(auth()->user()->id)],
+            'name' => ['string'],
+            'surname' => ['string'],
             'email' => ['email', Rule::unique('users', 'email')->ignore(auth()->user()->id)],
         ];
     }
