@@ -37,6 +37,13 @@ class GroupStoreRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'name' => "The name is already used.",
+        ];
+    }
+
     public function failedValidation(Validator $validator): void {
         throw new HttpResponseException(response()->json([
             'success' => false,
