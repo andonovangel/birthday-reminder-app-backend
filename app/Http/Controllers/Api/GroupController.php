@@ -35,9 +35,16 @@ class GroupController extends Controller
     {
         $birthdays = $this->birthdayService->findAll()
             ->where('group_id', $id)
-            ->when($request->sortBy && $request->sortOrder, function ($query) use ($request) {
+            ->when($request->has('search'), function ($query) use ($request) {
+                $query->where(function ($subQuery) use ($request) {
+                    $subQuery->where('name', 'like', "%$request->search%")
+                             ->orWhere('title', 'like', "%$request->search%");
+                });
+            })
+            ->when($request->sortBy && ($request->sortOrder && $request->sortOrder !== 'none'), function ($query) use ($request) {
                 $query->orderBy($request->sortBy, $request->sortOrder);
-            })->get();
+            })
+            ->get();
 
         return response()->json($birthdays, Response::HTTP_OK);
     }

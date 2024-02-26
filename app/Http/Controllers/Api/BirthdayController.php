@@ -16,7 +16,13 @@ class BirthdayController extends Controller
     public function index(BirthdayListRequest $request): JsonResponse 
     {
         $birthdays = $this->birthdayService->findAll()
-            ->when($request->sortBy && $request->sortOrder, function ($query) use ($request) {
+            ->when($request->has('search'), function ($query) use ($request) {
+                $query->where(function ($subQuery) use ($request) {
+                    $subQuery->where('name', 'like', "%$request->search%")
+                            ->orWhere('title', 'like', "%$request->search%");
+                });
+            })
+            ->when($request->sortBy && ($request->sortOrder && $request->sortOrder !== 'none'), function ($query) use ($request) {
                 $query->orderBy($request->sortBy, $request->sortOrder);
             })
             ->when($request->date, function ($query) use ($request) {
@@ -35,12 +41,6 @@ class BirthdayController extends Controller
         } catch(Exception $e) {
             return  response()->json(['message' => 'Birthday not found'], Response::HTTP_NOT_FOUND);
         }
-    }
-
-    public function search(string $search): JsonResponse 
-    {
-        $birthdays = $this->birthdayService->search($search);        
-        return response()->json($birthdays, Response::HTTP_OK);
     }
     
     public function store(BirthdayStoreRequest $request): JsonResponse

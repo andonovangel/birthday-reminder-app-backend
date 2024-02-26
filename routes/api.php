@@ -22,7 +22,6 @@ Route::group(['middleware' => ['auth:sanctum', 'checkToken']], function() {
     // Birthdays
     Route::get('/birthdays', [BirthdayController::class, 'index']);
     Route::get('/birthdays/{id}', [BirthdayController::class, 'show']);
-    Route::get('/birthdays/search/{search}', [BirthdayController::class, 'search']);
     Route::get('/archived-birthdays', [BirthdayController::class, 'archived']);
     Route::post('/birthdays', [BirthdayController::class, 'store']);
     Route::put('/birthdays/{id}', [BirthdayController::class, 'update']);
