@@ -23,7 +23,7 @@ class BirthdayMail extends Mailable
     public function build()
     {
         return $this->subject('Wish ' . $this->name . ' a happy birthday!')
-                    ->view('mail/birthday-mail');
+            ->view('mail/birthday-mail');
     }
 
     /**

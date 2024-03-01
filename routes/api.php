@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth:sanctum', 'checkToken']], function() {
     Route::put('/birthdays/{id}', [BirthdayController::class, 'update']);
     Route::delete('/birthdays/{id}', [BirthdayController::class, 'destroy']);
     Route::post('/restore-birthday/{id}', [BirthdayController::class, 'restore']);
+    Route::post('/send-email', [BirthdayController::class, 'send']);
 
     // Groups
     Route::get('/groups', [GroupController::class, 'index']);

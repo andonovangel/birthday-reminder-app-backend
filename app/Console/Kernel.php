@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         collect(User::all())->each(function ($user) use ($schedule) {
-            $schedule->job(new SendBirthdayReminderEmail($user))->everyMinute();
+            $schedule->job(new SendBirthdayReminderEmail($user))->daily();
         });
     }
 

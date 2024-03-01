@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\DTO\BirthdayDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{BirthdayListRequest, BirthdayStoreRequest, BirthdayUpdateRequest};
+use App\Mail\BirthdayMail;
 use App\Services\BirthdayService;
 use Exception;
 use Illuminate\Http\{JsonResponse, Response};
+use Illuminate\Support\Facades\Mail;
 
 class BirthdayController extends Controller
 {
@@ -102,5 +104,14 @@ class BirthdayController extends Controller
     {
         $birthdays = $this->birthdayService->findAllTrashed();
         return response()->json($birthdays, Response::HTTP_OK);
+    }
+
+    public function send(BirthdayStoreRequest $request): JsonResponse
+    {
+        $birthdayDate = date('m-d', strtotime($request->birthday_date));
+        if ($birthdayDate == date('m-d')) {
+            Mail::to(auth()->user()->email)->send(new BirthdayMail($request->name, $request->body, $request->phone_number));
+        }
+        return response()->json(['message' => 'Email reminder was sent.'], Response::HTTP_OK);
     }
 }
