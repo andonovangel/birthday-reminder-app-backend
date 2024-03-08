@@ -30,6 +30,7 @@ class UserUpdateRequest extends FormRequest
             'name' => ['string'],
             'surname' => ['string'],
             'email' => ['email', Rule::unique('users', 'email')->ignore(auth()->user()->id)],
+            'role' => [Rule::in(['Admin', 'User'])]
         ];
     }
 
